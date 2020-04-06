@@ -918,3 +918,21 @@ html的结构包括头部(Head)、主体(Body)两大部分，头部描述浏览�
 </html>
 
 
+* 任务计划
+方式一:关机时启动:将执行脚本放在/lib/system/system-shutdown/目录下
+方式二: 假设脚本为backup.sh 
+1. 在/lib/systemd/system目录下添加cleanup.service 这样一个systemd的配置文件,去调用bachup.sh 
+2. 配置文件
+[Unit]
+Description=Run command at shutdown
+Requires=network.target
+DefaultDependencies=no 
+Conflicts=reboot.target
+Before=shutdown.target
+[service]
+Type=oneshot
+ReminAfterExit=true
+ExecStart=/bin/true
+ExecStop=/bin/bash /路径/backup.sh 
+[Install]
+WantedBy=multi-user.target
