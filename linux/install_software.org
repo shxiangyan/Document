@@ -1,0 +1,110 @@
+* openpose
+** anaconda
+sudo sh Anaconda3-2019.03-Linux-x86_64.sh
+可以选择安装路径
+sourece ~/.bashrc
+** CUDA
+wget https://developer.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda_10.1.105_418.39_linux.run
+sudo sh cuda_10.1.105_418.39_linux.run
+run xxx
+只需选择:CUDA Tookit 版本号:
+** cmake
+wget https://github.com/Kitware/CMake/releases/download/v3.13.4/cmake-3.13.4.tar.gz
+tar xzvf cmake-3.13.4.tar.gz
+cd cmake-3.13.4
+./configure --qt-gui
+./bootstrap
+make -j6
+sudo make install
+
+** caffe
+git clone https://github.com/BVLC/caffe.git
+sudo cp Makefile.config.example Makefile.config
+sudo gedit Makefile.config
+1.应用 cudnn
+将
+#USE_CUDNN := 1
+修改成：
+USE_CUDNN := 1
+2.应用 opencv 版本
+将
+#OPENCV_VERSION := 3
+修改为：
+OPENCV_VERSION := 3
+3.使用 python 接口
+将
+#WITH_PYTHON_LAYER := 1
+修改为
+WITH_PYTHON_LAYER := 1
+4.修改 python 路径
+将Python2环境注销,换成Anaconda3下的Python环境
+ANACONDA_HOME:=
+PYTHON_INCLUDE:=
+5.将PYTHON_LIB:= /usr/lib注释，换成下面
+PYTHON_LIB:=$(home)/ANACOND
+6.修改CUDA的计算力
+7.MAKEFILE文件修改
+NVCCFLAGS +=-ccbin=$(CXX) -Xcompiler-fPIC $(COMMON_FLAGS)
+替换为：
+NVCCFLAGS += -D_FORCE_INLINES -ccbin=$(CXX) -Xcompiler -fPIC $(COMMON_FLAGS)
+将：
+LIBRARIES += glog gflags protobuf boost_system boost_filesystem m hdf5_hl hdf5
+替换为：
+LIBRARIES += glog gflags protobuf boost_system boost_filesystem m hdf5_serial_hl hdf5_serial
+ＯＫ，可以开始编译了，在caffe目录下执行：
+sudo make all -j8
+编译成功后可运行测试：
+sudo make runtest -j8
+配置pycaffe:
+sudo make pycaffe -j8
+添加环境变量
+export PYTHONPATH=/home/yan/data/softwear/caffe:$PYTHONPATH
+** openpose
+git clone \
+  https://github.com/CMU-Perceptual-Computing-Lab/openpose
+
+sh /home/yan/data/softwear/openpose-1.5.1/models/getModels.sh
+cd openpose
+sudo bash ./scripts/ubuntu/install_deps.sh
+
+cd 3rdparty
+git clone https://github.com/CMU-Perceptual-Computing-Lab/caffe
+git clone pybind11
+
+
+mkdir build
+cd build
+cmake ..   
+make -j4 
+sudo make install
+
+~/local/src/openpose/build/examples/openpose/openpose.bin \
+   --write_json outputJSON/ \
+   --display 0 \
+   --model_folder ~/local/src/openpose/models \
+   --video "./inputVideo.mp4" \
+   --write_video outputVideo.avi
+
+--write_json : JSON文件存储位置
+--display 0 : 显示推断结果，0代表不显示
+--model_folder : 模型位置
+--video : 视频位置
+--write_video : 带有姿势估计的视频存储位置
+
+--face，--hand，--part_candidates当添加这些选项的时候，计算时间也显着增加（5到10倍）
+
+〜/ local/src/openpose/build/examples/openpose/openpose.bin \ 
+   --face  --hand  --part_candidates  
+   --write_json outputJSON/ \ 
+   --display 0 \ 
+   --model_folder ~/local/src/openpose/models\ 
+   --video  “./inputVideo.mp4” \ 
+   --write_video outputVideo.avi
+
+~/local/src/openpose/build/examples/openpose/openpose.bin \
+    --face --hand --part_candidates \
+    --write_json ./output_json \
+    --display 0 \
+    --model_folder ~/local/src/openpose/models
+    --image_dir ./image \
+    --write_images ./output_image \

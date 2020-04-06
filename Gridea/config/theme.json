@@ -1,0 +1,36 @@
+{
+  "config": {
+    "archivesPageSize": 50,
+    "archivesPath": "archives",
+    "dateFormat": "YYYY-MM-DD",
+    "feedCount": 10,
+    "feedFullText": true,
+    "footerInfo": "Powered by <a href=\"https://github.com/shxiangyan\" target=\"_blank\">shxiangyan</a>",
+    "postPageSize": 10,
+    "postPath": "post",
+    "postUrlFormat": "SLUG",
+    "showFeatureImage": true,
+    "siteDescription": "shxiangyan@gmail.com",
+    "siteName": "Shxiangyan's Home",
+    "tagPath": "tag",
+    "tagUrlFormat": "SHORT_ID",
+    "themeName": "paper"
+  },
+  "customConfig": {
+    "contentBgColor": "#ffffff",
+    "customCss": "",
+    "facebook": "",
+    "ga": "",
+    "github": "https://github.com/shxiangyan",
+    "latestArticleText": "最新文章",
+    "navBgColor": "#ffffff",
+    "nextArticleText": "下一篇",
+    "nextPageText": "下一页",
+    "prevPageText": "上一页",
+    "readMoreText": "Read More",
+    "tagListText": "标签列表",
+    "twitter": "",
+    "weibo": "",
+    "zhihu": ""
+  }
+}

@@ -1,0 +1,49 @@
+*c w 重命名文件* (a 在文件名的之后后缀之前写入， i在文件名的最开始写入，A在文件名最后写入)
+
+r 选择打开模式（0默认编辑器打开，）
+*S 终端进入文件夹*
+z h 显示隐藏文件
+
+*y p 复制当前文件的路径*
+*y n 复制文件名*
+y . 去掉文件后缀的文件名
+*y y 复制文件*
+*p p 粘贴*
+*d d 剪切*
+d U 查看文件有多大
+
+*w 任务管理器 (dd取消任务)*
+v全部选中
+<space> 想选中的文件上按空格
+:bulkrename
+
+创建文件
+:shell emacs xxx.xx
+:cd xxx
+
+排序
+o s 文件大小
+o c 修改日期
+o n 文件名
+
+
+/ 搜索（n向下搜索，N向上搜索）
+gg 最上
+G 最下
+
+[ 上一级上
+] 上一级下
+# H 回退上一步操作
+# L 上升
+
+*d D 删除*
+
+下载youtube链接：shell youtube -ic URL
+
+
+备注:
+生成配置文件：ranger --copy-config=all
+~/.config/ranger中
+
+
+

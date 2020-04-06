@@ -1,0 +1,31 @@
+https://help.agi.com/stkdevkit/index.htm#../Subsystems/connectCmds/Content/commandListings.htm%3FTocPath%3DLibrary%2520Reference%7CConnect%2520Command%2520Library%7C_____0
+
+* STK工具操作
+建卫星
+STK 提供了六种类型的运载工具对象:卫星(Satellite),运载火箭(Launch Vehicle),
+导弹(Missile),飞机(Aircraft),舰船(Ship)和车辆(Ground Vehicle)。下面介绍如
+何创建卫星对象。
+1)设定轨道参数
+(1)点击 Insert—New,打开 Object 对话框
+(2)双击图标, Object Browser 新出现了一个名为 Satellite1 的对象,
+同时出现了轨道设定向导对话框:Orbit Wizard;
+提示:如果 Orbit Wizard 没有出现,右击 Object Browser 中的 Satellite1 对象,选择
+Satellite Tools—Orbit Wizard;
+(3)在 Orbit Wizard 中点击 Next;
+(4)从 Orbit Selection 下拉菜单中选择 Critically Inclined,点击 Next;
+(5)Apogee Altitude 输入 15000km;
+(6)Perigee Altitude 输入 1500km,点击 Next;
+(7)点击 Finish。
+(8)在 Object Browser 中右击 Satellite1,重命名为 MEO。
+此时 2D 视图出现了 MEO 的星下点轨迹,3D 视图中出现了 MEO 轨道。
+Orbit Wizard 提供了一种简单的定义不同卫星轨道的方法。
+
+* 通信链路
+
+* 链接天线
+
+* 第10章 矢量工具
+
+* 14章 Analyzer工具
+* 16 章
+

@@ -1,0 +1,185 @@
+#+TITLE:快捷键
+** 移动
+M-b 左移一个词
+M-f 右移一个词
+M-a 左移到句首
+M-e 右移到句首
+M-< 左移到最前
+M-> 右移到最后
+C-v 下移一页
+M-v 上移一页
+C-u 8 C-f 向前8个字符
+C-u 3 C-l 当前行距顶部有3行
+** 删除
+M-k 从光标处删除到最后
+M-d 删除光标处的一个词
+
+** 窗格
+   C-x 0退出当前窗口
+   C-x 1 仅保留当前窗格
+   C-x 2 上下两个窗格
+   C-x 3 左后两个窗格
+   C-M-v 滚动另外一个窗户的窗格
+   C-x o 更改当前正在操作的窗格
+   
+** 选择
+   C-w 剪切
+   M-w 复制
+   C-y 粘贴
+   C-<space> 选择
+   C-= 自动选择
+   M-s-e 选中该文件中的全部该字符串
+** 文件
+C-x C-q 设为只读   
+C-x C-f 打开文件
+   C-x C-s 保存
+   C-c p h 从git仓库中打开文件
+*** C-x d 打开文件操作窗口 
+shift-6返回上一级
++ 创建目录
+g 刷新dir
+C copy文件
+d 标记删除 x执行删除
+D 删除目录
+R rname
+** 缓冲区
+   C-x C-b 打开缓冲区
+   C-x b 缓冲区名字 进入缓冲区
+   C-x s 缓冲区文件全部保存
+** 自动保持文件
+   M-x recover file<return>
+** 切换major mode
+   Mode-x text-mode<return>
+** 查看 
+   C-s string <return> 下一个C-s 上一个C-r
+   M-s o 查找并生成一个窗口 e编辑
+   M-x replace-s<Return> changed<return>altered<return> 替换
+   C-h m 查看激活的模式
+   C-x C-r 查看历史打开的文件
+   C-h C-f查看函数
+F5 根据字符串查找文件
+   
+** 自动折行
+   M-x auto-fill-mode<return>
+   设置折行的字数：C-u 20 C-x f
+   M-x comment-or-uncomment 注释多行
+** 包管理
+   M-x package-install
+   M-x autoremove
+   M-x package-list-packages i安装 u取消 d删除 x执行
+   M-x customize-group 自定义包
+   M-x byte-recompaire-dir .el->.elc
+   M-x byte-compaire-file
+** 整体缩进
+M-C-\
+   
+   
+** 多行注释
+C-x / 
+
+** org-mode
+   DEADLINE: <2020-02-19 三 21:00> SCHEDULED: <2020-02-19 三 20:00>
+
+C-c C-e 导出格式
+C-x C-x 选中一行
+C-c C-c 在标题后设标签
+M-<return> 建立同级标题
+段落：回车两次或者//.
+C-c C-t 设置ToDo
+C-c C-s 选择开始的时间
+C-c C-d 选择结束的时间
+C-c a 打开设置的agenda d一天 w一周,agenda目录在~/.emacs.d/org
+C-c $ 移除DONE标记的任务
+C-c . 激活时间
+C-c C-q 标签
+
+
+字体：
+*粗体*
+/斜体/
++删除线+
+_下划线_
+下标： H_2 O(这里必须留一个空格要不然2和O都成为小标，目前还不知道怎么去掉空格)
+上标： E=mc^2
+等宽字：  =git=
+
+列表 
+这里有有序和无序两种，还有一种描述列表。
+无序列表以'-'、'+'或者'*'开头
+有序列表以'1.'或者'1)'开头
+描述列表用'::'
+注意事项
+列表符号后面都要有空格
+同级别的列表缩进要相同
+如果想要加入同级别的列表，可以 M-RET
+空两行之后列表结束，如果空一行执行M-RET，实际上还是输入同级项
+
+- fjeio
+- fieojo :: fjeo
+- fieh
+- 
+-
+ jljl								       :fjoe:
+
+#+CAPTION: This is the caption for the next table (or link)
+
+#+CAPTION: 表格的标题
+| 1 | one                          |
+|---+------------------------------| :: |- + <return>
+| 2 | two                          |
+| 3 | This is a long chunk of text |
+
+
+
+任务管理<2020-02-28 五>
+C-c . 激活时间<2020-02-26 三 08:00>
+C-c C-s 开始
+C-c C-d 结束
+
+#+BEGIN_SRC org   设置关闭close状态
+,# STARTUP:logdone
+
+#+END_SRC
+
+#+TAGS: #嚣张(z) #xiaowang(w) 设置快捷键标签
+#+TODO: TODO(t) SCH(s) WAIT(w) | DONE(d) CANLENDE0(c)  设置多种标记
+
+C-c '  进入编码区
+#+BEGIN_SRC python :results output
+  for i in [1,2,3,4]:
+    print(i)
+
+#+END_SRC
+
+#+RESULTS:
+: 1
+: 2
+: 3
+: 4
+
+ dhe								    :fjeiojo:feoi:fjeojkn:* TODO nc 
+ DONE fjeo						      :#嚣张:#xiaowang:
+
+
+
+-----
+
+http://blog.csdn.net/CHCH998/article/details/81346296
+file:///home/yan/note.org
+
+** markdown
+C-b 加粗
+C-I 
+C-u 
+C-k 插入链接
+C-t 插入表格
+C-d 选中单词
+C-e 选中同规格的文字
+C-Shift-i 插入图片
+> <space> 引用
+``` 代码
+C-S-m 行外公式
+** anaconda-mode
+M-x pythonic-activate选择虚拟环境
+C-x x 选择虚拟环境文件夹或者解释器
+C-x C-f /ssh:name@ip:  远程

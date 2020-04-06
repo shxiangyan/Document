@@ -1,0 +1,92 @@
+* 模块
+** 当前路径下调用模块
+文件1:wendu.py
+
+#+BEGIN_SRC python :results output
+  def cf2 (cel):
+    fah=cel*1.8+32
+    return fah
+  def fc2(fah):
+    cel=(fah-32)/1.8
+    return cel
+
+#+END_SRC
+
+文件2:output.py 
+#+BEGIN_SRC python :results output
+import wendu
+print("32摄氏度=%.2f华氏度" % wendu.cf2(32))
+print("99华氏度=%.2f摄氏度" % wendu.fc2(99))
+#+END_SRC
+
+#+RESULTS:
+
+调用时会自动生成一个__pycache__文件
+** 改变搜索路径
+#+BEGIN_SRC python :results output
+  import sys 
+  print(sys.path)  #查看搜索路径
+  sys.path.append("\home\yan\Document")
+#+END_SRC
+
+#+RESULTS:
+** 包
+创建一个文件然后把要执行的模块函数放如该文件,然后创建一个__init__.py 文件.
+导入:import 包名.模块名
+** 模块的发布和安装
+*** 本地发布
+1. 加入发布一个本地的包
+${POSE_ROOT}
+|-- Math3
+`--|-- __init__.py 
+|  |-- demo1.py  
+|  |-- demo2.py
+|-- setup.py 
+|-- dist 
+`--|-- Math3-1.0.tar.gz
+
+2. 在包的同级目录添加一个setup.py
+setup.py 中:
+#+BEGIN_SRC python :results output
+from distutils.core import setup
+setup(
+  name='Math3',  #对外发布的模块名,可以是任意
+  version='1.0'
+  descripe='fejioj'
+  author='shxiangyan'
+  py_modules=['Math3.demo1','Math3.demo2']  #对外发布的模块要用明确定义
+)
+
+#+END_SRC 
+3. 制作压缩包python setup.py sdist 
+在包的同级目录生成一个dist文件,下包含一个Math3-1.0.tar.gz
+4. 安装到{$envs_name}\lib\site-packages
+python setup.py install
+python setup.py install --inplace build_ext(生成C/C++扩展,编译连接生成目录)
+python setup.py install --user    强制在目录中安装包
+5.使用
+import 包名.文件名
+6.卸载pip uninsetall 包名
+*** 上传到PyPI
+1.注册
+http://pypi.python.org
+2.创建用户信息文件
+方式一:
+python setup.py register 
+方式二:
+在用户的家目录创建一个文件名为.pypirc,内容为:
+[distutils]
+index-servers=pypi 
+[pypi]
+repository=https://upload.pypi.org/legacy/
+username=账户名
+password=密码
+3.上传发布
+python setup.py sdist upload
+4.管理登录pypi官网
+5.安装 pip install 包名
+更新 pip install 包名 update
+
+
+
+

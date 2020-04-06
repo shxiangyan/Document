@@ -1,0 +1,587 @@
+* 最基础
+% 导言区
+\documentclass{article}%book,reprt,leter
+
+% 正文区(文稿区)
+\begin{document}
+  Hello World!
+\end{document}
+* 字体
+%仅有10、11、12pt
+\documentclass[12pt]{article}
+\usepackage{ctex}
+%定义字体格式命令,定义命令
+\newcommand{\myfont}{\textit{\textbf{\textsf{Fancy Text}}}}
+%正文区（文稿区）
+\begin{document}
+	%方式一：字体族设置（罗马字体、无衬线字体、打字机字体）
+	\textrm{罗马字体Roman：Family}
+	%无衬线字体
+	
+	\textsf{无衬线字体：Sans Serif Family}
+	%打字机字体
+	
+	\texttt{打字机字体：Typewriter Family}
+	
+	%字体形状（直立、斜体、伪斜体、小型大写）
+	\textup{直立：Upright Shape}
+	
+	\textit{斜体：Italic Shape}
+	
+	\textsl{伪斜体:Slanted Shape}
+	
+	\textsc{小型大写：Small Caps Shape}
+	
+	%方式二：声明后续字体,可用大括号进行分组。知道若无大括号知道遇到下一个字体声明才结束当前字体声明，同样可以用大括号分组限定字体声明范围。
+	\rmfamily {Roman} Family
+	
+	\sffamily Sans Serif Family
+	
+	\ttfamily Typewriter Family
+	
+	{\upshape Upright Shape}
+	
+	{\itshape Italic Shape}
+	
+	{\slshape Slanted Shape}
+	
+	{\scshape Small Caps Shape}
+	%中文字体,帮助文档（texdoc ctex）
+	
+	{\songti 宋体}\quad1
+	
+	{\heiti 黑体}\quad2
+	
+	{\fangsong 仿宋}\quad3
+	
+	{\kaishu 楷书}\quad4
+	
+	中文字体的\textbf{粗体}与\textit{斜体} 
+	%字体大小
+	{\tiny Hello}\\
+	{\scriptsize Hello}\\
+    {\normalsize Hello}\\%normalsiz大小的设置在初始化文档类时
+    {\small Hello}\\
+    {\normalsize Hello}\\
+    {\large Hello}\\
+    {\Large Hello}\\
+    {\LARGE Hello}\\
+    {\huge hello}\\
+    {\Huge hello}\\
+	
+    %中文字号设置命令
+    \zihao{-0}你好！\\
+    \zihao{5}你好！\\
+    \myfont
+\end{document}
+* 提纲
+\documentclass{ctexbook}%ctexbook,ctexrep,ctexart(居中)
+\usepackage{ctex}
+
+%正文区（文稿区）
+\begin{document}
+	\tableofcontents%产生目录
+	\section{引言}%自动首行缩进2字符，插入空行或者\par来进行段落之间的分割。通过双反斜杠\\命令实现换行,
+	今天，是卡接口的撒娇顾客来电了；\\速度加快国际奥IE急哦我就疯狂模式了；打开；就离开；离开的酒店可根据欧；kshfhiohefjdsnjknjhuahe电话是的呀UI和覅武器及恩发空间啊。
+	
+	撒娇地方；；ew
+	\section{实验方法}
+	\section{实验结果}
+	\subsection{数据}
+	\subsection{图表}
+	\subsubsection{实验条件}
+	\subsubsection{实验过程}
+	\subsection{结果分析}
+	\section{结论}
+	\section{致谢}
+	\chapter{绪论}%ctexbook连用
+	\section{研究的目的和意义}
+	\section{国外研究现状}
+	\section{国内研究现状}
+	\section{研究内容}
+	\section{技术路线}
+	\chapter{实验与结果分析}
+	\section{引言}
+	\section{实验方法}
+	\section{实验结果}
+	\subsection{图表}
+	\subsection{数据}
+	\subsubsection{实验条件}
+	\subsubsection{实验过程}
+	\subsection{结果分析}
+	\section{结论}
+	\section{致谢}
+	
+\end{document}
+
+* 图片表格
+\documentclass{ctexart}%ctexbook,ctexrep,详见 texdoc booktab，texdoc longtab，texdoc tabu
+\usepackage{ctex}
+\usepackage{graphicx}
+\graphicspath{{figure/}}
+
+%正文
+\begin{document}
+	%浮动体
+	%实现灵活分页（避免无法分割的内容产生的页面留白）
+	%给图表添加标题
+	%交叉引用
+	
+	%figure环境（table环境与之类似）
+	%\begin{figure}
+	%	content...
+	%\end{figure}
+	
+	%<允许位置>参数（默认tbp）
+	%h,此处（here）-代码所在的上下文位置
+	%t，页顶（top）-代码所在的页面或者之后页面的顶部
+	%b,页底
+	%p，独立一页
+	%标题控制（caption,bicaption等宏包设置）
+	%排绕（picinpar、wrapfig等宏包）
+	%并排与子图表（subcaption、subfig、floatrow等宏包）
+	\LaTeX{}中的插图,\TeX 系统的吉祥物---小狮子见图\ref{fig}：	%\ref{label}引用标签
+	
+	\begin{figure}[htbp]%可选参数指定排版位置
+		
+		\centering	%居中
+		\includegraphics[scale=0.3]{1.png}
+		\caption{\TeX 系统的吉祥物}\label{fig}	%设置标题,\label{key}设置标签
+		
+	\end{figure}
+	
+	如表\ref{key}所示：
+	\begin{table}[h]
+		\centering 
+		\caption{考试成绩}\label{key}
+		
+		\begin{tabular}{l|| c |c| p{1.5cm}| r}	
+			%生成表格tabular。5列表格，
+			%l左对齐，c居中对齐，r右对齐。
+			%竖线符号表示竖线，两个竖线表示表格双竖线。
+			%用p{<宽>}生成指定宽度的表格列，当内容超过时自动产生换行。
+			\hline	%产生表格横线
+			姓名&语文&数学&外语&备注\\
+			\hline \hline	%两个hline产生双横线
+			张三&87&100&93&优秀\\
+			\hline 
+			
+		\end{tabular}
+	\end{table}
+
+\end{document}
+
+** 又一图片
+\documentclass{ctexart}%ctexbook,ctexrep,详见texdoc graphicx
+\usepackage{ctex}
+
+%导言区：\usepackage(graphicx)
+%语  法：\includegraphics[<选项>]{<文件名>}选项用于缩放比例旋转等
+%格  式:EPS,PDF,PNG,JPFG,BMP
+\usepackage{graphicx}
+\graphicspath{{figure/},{pics/}}%图片在当前目录下的figures目录(多路径)
+
+%正文区(文稿区)
+\begin{document}
+	\LaTeX{}中的插图:  %用空行使提示文字在图片上方
+	
+	\includegraphics[scale=0.3,angle=-45,width=0.2\textwidth]{1.png}%scale0~1 height(cm) weight,angle=-45
+\end{document}
+* 数学公式
+** 基础
+\documentclass{article}
+\usepackage{ctex}
+\usepackage{amsmath}
+\begin{document}
+	\section{简介}
+	\LaTeXe{}将排版内容分为文本模式和数学模式。文本模式用于普通文本排版，数学模式用于数学公式排版
+	
+	
+	\section{行内公式}
+	
+	\subsection{美元符号}
+	交换律是$a+b=b+a$,如$1+2=2+1=3$。
+	
+	\subsection{小括号}
+	交换律是\(a+b=b+a\),如\(1+2=2+1=3\)。
+	
+	\subsection{math环境}
+	交换律是\begin{math}
+		a+b=b+a
+	\end{math}
+	如\begin{math}
+		1+2=2+1=3
+	\end{math}。
+	
+	
+	\section{上下标}
+	\subsection{上标}
+	$3x^2-x+2=0$
+	
+	$3x^{20}+2=0$%当指数是多位数时要用大括号进行分组
+	
+	\subsection{下标}
+	$a_0,a_{100}$
+	
+	\section{希腊字母}
+	$\alpha$
+	$\beta$
+	$\gamma$
+	$\epsilon$
+	$\omega$
+	
+	$\Gamma$
+	$\Delta$
+	$\Theta$
+	$\Pi$
+	$\Omega$
+	
+	$\alpha^3+\beta^2+\gamma=0$
+	
+	\section{数学函数}
+	$\log$
+	$\sin$
+	$\cos$
+	$\arcsin$
+	$\arccos$
+	$\ln$
+	
+	$\sin^2 x+\cosh^2 y=1$
+	
+	$y=\arccos x$
+	
+	$y=\sin^{-1} x$
+	
+	$y=\ln x$
+	
+	$\sqrt{2}$
+	
+	$\sqrt{x^2+y^2}$
+	
+	$\sqrt{2+\sqrt{20}}$
+	
+	$\sqrt[4]{x}$
+	
+	\section{分式}
+	大约是原体积的$3/4$。
+	大约是原体积的$\frac{3}{4}$
+	
+	$\frac{1}{1+\frac{1}{x}}$
+	
+	\section{行间公式}
+	\subsection{美元符号}
+	%方式一：使公式占一行并居中，应用两个美元。
+	交换律：$$a+b=b+a$$
+
+	\subsection{中括号}
+	%方式二：
+	交换律是\[a+b=b+a\]
+	
+	\subsection{displaymath环境}
+	%方式三：
+	交换律：
+	\begin{displaymath}
+	a+b=b+a
+	\end{displaymath}
+	
+	\subsection{自动编号公式环境}
+	交换律是：
+	\begin{equation}
+		a+b=b+a
+	\end{equation}
+	%交叉引用
+	结合律如式\ref{key}所示：
+	\begin{equation}
+	a+b=b+a\label{key}
+	\end{equation}
+	
+	\subsection{不编号equation*公式环境}
+	\begin{equation*}
+		a+b=b+a
+	\end{equation*}
+\end{document}
+** 单行公式，多行公式
+\documentclass{ctexart}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\begin{document}
+	%gather和gather*环境（可以使用\\换行）
+	%带编号
+	\begin{gather}
+		a+b=b+a\\
+		ab=ba
+	\end{gather}
+	%不带编号
+	\begin{gather*}
+		a+b=b+a\\
+		ab=ba
+	\end{gather*}
+	%使用notag阻止编号，表示该行不编号
+	\begin{gather}
+		a+b=b+a \notag\\
+		ab=ba 
+	\end{gather}
+	%align和align*环境（用&进行对齐）,可以是任意位置
+	%带编号
+	\begin{align}
+		x&=t+\cos t+1\\
+		y&=2\sin t
+	\end{align}
+	
+	\begin{align}
+	x&=t & x&=t+\cos t+1&x&=t\\
+	y&=2t& y&=2\sin t   &y&=\sin t
+	\end{align}
+	%sqlit环境（对齐采用align环境的方式，编号在中间）
+	\begin{equation}
+		\begin{split}
+		\cos 2x&=\cos^2 x-\sin^2 x\\
+			&=2\cos^2 x-1
+		\end{split}
+	\end{equation}
+	%cases环境
+	%每行公式中使用&分隔为两部分，
+	%通常表示值和后面的条件
+	\begin{equation}
+		D(x)=\begin{cases}
+		1,&\text{如果}x\in \mathbb{Q};\\%\in用于输出属于符号，\mathbb用于输出花体字符，数学模式的\text命令用于切换到临时文本模式
+		0,&\text{如果}x\in \mathbb{R}\setminus\mathbb{Q}.
+		\end{cases}
+	\end{equation}
+	
+\end{document}
+** 矩阵
+\documentclass{ctexart}	%ctexbook,ctexrep
+%导言区
+\usepackage{ctex}
+\usepackage{amsmath}
+%使用newcommand制定命令，第一个参数命令的名字，第二个参数命令的内容。
+\newcommand{\adots}{\mathinner{\mkern2mu%
+		\raisebox{0.1em}{.}\mkern2mu\raisebox{0.4em}{.}%
+		\mkern2mu\raisebox{0.7em{.}\mkern1mu}}}
+
+%正文区
+\begin{document}
+	%矩阵环境中，用&分隔列，用\\分隔行
+	\[
+	\begin{matrix}
+		0&1 \\
+		1&1
+	\end{matrix}
+	%pmatrix(小括号)
+	\begin{pmatrix}
+		0&1\\
+		1&0
+	\end{pmatrix}
+	%bmatrix(中括号)
+	\begin{bmatrix}
+		1&2\\
+		4&3
+	\end{bmatrix}
+	%Bmatrix（大括号）
+	\begin{Bmatrix}
+		1&4\\
+		2&8
+	\end{Bmatrix}
+	%vmatrix（单竖线）
+	\begin{vmatrix}
+		2&4\\
+		6&8
+	\end{vmatrix}
+	%Vmatrix（双竖线）
+	\begin{Vmatrix}
+		5&10\\
+		20&10
+	\end{Vmatrix}
+	\]
+
+	%矩阵与另外的方法联立
+	\[
+	A=\begin{pmatrix}
+		a_{11}^2&a_{12}^2&a_{452}^{567}\\
+		0&a_{22}&a_{23}\\
+		0&0&a_{33}
+	\end{pmatrix}
+	\]
+	%常用省略号：\dots(横)、\vdots（竖）、\ddots（斜）
+	\[
+	A=\begin{bmatrix}
+	a_{11}&\dots&a_{}1n\\
+	&\ddots&\vdots\\
+	0&&a_{nn}
+	\end{bmatrix}_{n \times n}
+	\]
+	
+	%分块矩阵（矩阵嵌套）
+	\[
+	\begin{pmatrix}
+		\begin{pmatrix}
+			1&0\\0&1
+		\end{pmatrix} &
+		\begin{pmatrix}
+			5&6\\7&8
+		\end{pmatrix}  \\
+		\begin{pmatrix}
+			7&8\\9&10
+		\end{pmatrix} &
+		\begin{pmatrix}
+			11&12\\13&14
+		\end{pmatrix}
+	\end{pmatrix}_{n \times n}
+	\]
+	\[
+	\begin{pmatrix}
+		\begin{pmatrix}
+		1&0\\0&1
+		\end{pmatrix} &
+		\text{\Large 0} \\	%\text可以独占一个分块矩阵单元
+		\text{\Large 0} &
+		\begin{pmatrix}
+		11&12\\13&14
+		\end{pmatrix}
+	\end{pmatrix}_{n \times n}
+	\]
+	%三角矩阵
+	\[
+	\begin{pmatrix}
+	a_{11}&a_{12}&\cdots&a_{1n}\\
+	&a_{22}&\cdots&a_{2n}\\
+	&	&\ddots&\vdots\\
+	\multicolumn{2}{c}{\raisebox{1.3ex}[0pt]{\Huge 0}}%用multicolumn表示三角部分
+	&                    &a_{nn}
+	\end{pmatrix}
+	\]
+	%跨列的省略好：\hdotsfor{列数}
+	\[
+		\begin{pmatrix}
+			1&\frac{1}{2}&\dots&\frac{1}{n}\\
+			\hdotsfor{4}\\%用关键字：hdotsfor，一行省略号
+			m&\frac{m}{2}&\dots&\frac{m}{n}
+		\end{pmatrix}
+	\]
+	%行内小矩阵（smallmatrix）环境
+	复数$z=(x,y)$也可用矩阵
+	\begin{math}
+		\left(%需要手动加上左括号
+		\begin{smallmatrix}
+		x&-y\\y&x
+		\end{smallmatrix}
+		\right)%需要手动加上右括号
+	\end{math}
+	%array环境(类似与表格环境tabular)
+	\[
+	\begin{array}{r|r}%rlc和竖线制定位置格式
+	\frac{1}{2} & 0\\
+	\hline%产生横线
+	0&-\frac{a}{bc}\\
+	\end{array}
+	\]	
+\end{document}
+
+* 参考文献
+** 一次管理一次使用
+\documentclass{ctexart}
+\usepackage{ctex}
+
+\begin{document}
+	%一次管理一次使用
+	%参考文献格式：
+	%\begin{thebiliography}
+	%	\bibitem[记号]{引用标志}文献条目1
+	%	\bibitem[记号]{引用标志}文献条目2
+	%  ...
+	%\end{thebiliography}
+	%其中文献条目包括：作者，题目，出版社，年代，版本，页码等。
+	%引用时要可以采用：\cite{引用标志1，引用标志2}
+	引用一篇文章\cite{article1}引用一本书\cite{book1}等等。
+	
+	\begin{thebibliography}{99}
+		\bibitem{article1}陈立辉，苏伟，才穿，陈小云.\emph{基于LaTeX的Web数学公式提取方法研究}[J].计算机科学，2014(06).
+		\bibitem{book1}William H,Pregress,SaulA.Teukolsky,William T.Vetterling,Brain P.Flannery，\emph{Numetical Recipes 3rd Editton:The Art of Scientific Computing}Cambridge University Press,New York,2007.
+		\bibitem{latexGuide}Kopka Helmut,W.Daly Patrick,
+		\emph{Guide to\LaTeX},$4^{th}$Edition.
+		Available at \texttt{http://www.amazon.com}.
+		\bibitem{latexMath}Graeter George,\emph{Math Into\LaTeX},
+		BirkhAuser Boston;3 editinon(June 22,2000).
+	\end{thebibliography}
+	
+\end{document}
+** 一次管理多次使用
+@BOOK{mitrelbach2004,
+title={The{{\LaTeX}}Companion},
+publisher={Addison-Wesley},
+year={2004},
+author={Frank Mittelbach and Michel Goossens},
+series={Tools and Techniques for Computer Typesetting},
+address={Bosston},
+edition={Second}
+}
+
+
+
+
+
+*** 方法一
+\documentclass{ctexart}
+
+\usepackage{ctex}
+%\usepackage[round]{natbib}
+
+\bibliographystyle{plain}%plain unsrt alpha abbrv,指定样式,plainnat
+\begin{document}
+
+	%参考文献数据库是极易出错和繁琐的，可以使用google学术搜索实现文献的管理和维护，1搜索bibtex，2点击引用链接点击Bibtex，3可以得到.bib数据，4添加数据库中，5通过引用标志引用该文献。知网需要zotero浏览器，https://www.zotero.org/download/ Firefox Extension
+	%可以把所用参考文献放入一个参考文件数据库中操作
+	这是一个参考文献引用：\cite{hadash2018estimate}
+	\nocite{*} %排版所用未引用的参考文献
+	
+	\bibliography{test}%指定参考文献数据库,多个数据库中间用逗号隔开
+	
+	
+\end{document}
+*** 方法二
+# \documentclass{ctexart}
+
+# \usepackage{ctex}
+# \usepackage[round]{natbib}
+
+# \bibliographystyle{plain}%plain unsrt alpha abbrv,指定样式,plainnat
+# \begin{document}
+# 	%参考文献数据库是极易出错和繁琐的，可以使用google学术搜索实现文献的管理和维护，1搜索bibtex，2点击引用链接点击Bibtex，3可以得到.bib数据，4添加数据库中，5通过引用标志引用该文献。知网需要zotero浏览器，https://www.zotero.org/download/ Firefox Extension
+# 	%可以把所用参考文献放入一个参考文件数据库中操作
+# 	这是一个参考文献引用：\cite{mitrelbach2004}
+# 	\nocite{*} %排版所用未引用的参考文献
+# 	\bibliography{test,cnki}%指定参考文献数据库,多个数据库中间用逗号隔开
+	
+# \end{document}
+* 命令 
+%导言区
+\documentclass{ctexart}%ctexbook,ctexrep
+
+%\newcommand{cmd}{def}->定义命令
+%命令只能由字母组成，不能以\end开头
+%\newcommand{cmd}[args][default]{def}
+%正文区
+
+%使用\PRC相当于People's Republic 0f \emph{China}
+\newcommand{\PRC}{People's Republic of \emph{China}}
+%传参参数个数可以从1到9
+\newcommand{\loves}[2]{#1 喜欢 #2}%#1表示第一个参数，#2表示第二个
+%\newcommand{cmd}[args][default]{def},选项default可以为函数指定默认值，指定参数的个数同时2指定了首个参数的的默认值，那么这个命令的第一个参数就成为可选的参数
+\newcommand{\lo}[3][喜欢]{#2#1#3}
+
+%\renewcommand{cmd}[args][default]{def}-重定义命令
+%与\newcommand{cmd}{def}命令作用和用法相同，但只能用于已有命令
+
+%定义和重定义环境
+%\newenvironment{name}[args][default]{begdef}{enddef}
+%\renewenvironment{name}[args][default]{begdef}{enddef}
+%
+
+\begin{document}
+	\PRC
+	
+	\loves{小明}{小李}%调用时应把两个参数分别用大括号包括调用
+	
+	\lo{小刘}{小李}
+\end{document}

@@ -1,0 +1,55 @@
+\documentclass{ctexart}%ctexbook,ctexrep,详见 texdoc booktab，texdoc longtab，texdoc tabu
+\usepackage{ctex}
+\usepackage{graphicx}
+\graphicspath{{figure/}}
+
+%正文
+\begin{document}
+	%浮动体
+	%实现灵活分页（避免无法分割的内容产生的页面留白）
+	%给图表添加标题
+	%交叉引用
+	
+	%figure环境（table环境与之类似）
+	%\begin{figure}
+	%	content...
+	%\end{figure}
+	
+	%<允许位置>参数（默认tbp）
+	%h,此处（here）-代码所在的上下文位置
+	%t，页顶（top）-代码所在的页面或者之后页面的顶部
+	%b,页底
+	%p，独立一页
+	%标题控制（caption,bicaption等宏包设置）
+	%排绕（picinpar、wrapfig等宏包）
+	%并排与子图表（subcaption、subfig、floatrow等宏包）
+	\LaTeX{}中的插图,\TeX 系统的吉祥物---小狮子见图\ref{fig}：	%\ref{label}引用标签
+	
+	\begin{figure}[htbp]%可选参数指定排版位置
+		
+		\centering	%居中
+		\includegraphics[scale=0.3]{vgg16.pdf}
+		\caption{\TeX 系统的吉祥物}\label{fig}	%设置标题,\label{key}设置标签
+		
+	\end{figure}
+	
+	如表\ref{key}所示：
+	\begin{table}[h]
+		\centering 
+		\caption{考试成绩}\label{key}
+		
+		\begin{tabular}{l|| c |c| p{1.5cm}| r}	
+			%生成表格tabular。5列表格，
+			%l左对齐，c居中对齐，r右对齐。
+			%竖线符号表示竖线，两个竖线表示表格双竖线。
+			%用p{<宽>}生成指定宽度的表格列，当内容超过时自动产生换行。
+			\hline	%产生表格横线
+			姓名&语文&数学&外语&备注\\
+			\hline \hline	%两个hline产生双横线
+			张三&87&100&93&优秀\\
+			\hline 
+			
+		\end{tabular}
+	\end{table}
+
+\end{document}

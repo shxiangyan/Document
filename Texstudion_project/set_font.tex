@@ -1,0 +1,67 @@
+%仅有10、11、12pt
+\documentclass[12pt]{article}
+\usepackage{ctex}
+%定义字体格式命令,定义命令
+\newcommand{\myfont}{\textit{\textbf{\textsf{Fancy Text}}}}
+%正文区（文稿区）
+\begin{document}
+	%方式一：字体族设置（罗马字体、无衬线字体、打字机字体）
+	\textrm{罗马字体Roman：Family}
+	%无衬线字体
+	
+	\textsf{无衬线字体：Sans Serif Family}
+	%打字机字体
+	
+	\texttt{打字机字体：Typewriter Family}
+	
+	%字体形状（直立、斜体、伪斜体、小型大写）
+	\textup{直立：Upright Shape}
+	
+	\textit{斜体：Italic Shape}
+	
+	\textsl{伪斜体:Slanted Shape}
+	
+	\textsc{小型大写：Small Caps Shape}
+	
+	%方式二：声明后续字体,可用大括号进行分组。知道若无大括号知道遇到下一个字体声明才结束当前字体声明，同样可以用大括号分组限定字体声明范围。
+	\rmfamily {Roman} Family
+	
+	\sffamily Sans Serif Family
+	
+	\ttfamily Typewriter Family
+	
+	{\upshape Upright Shape}
+	
+	{\itshape Italic Shape}
+	
+	{\slshape Slanted Shape}
+	
+	{\scshape Small Caps Shape}
+	%中文字体,帮助文档（texdoc ctex）
+	
+	{\songti 宋体}\quad1
+	
+	{\heiti 黑体}\quad2
+	
+	{\fangsong 仿宋}\quad3
+	
+	{\kaishu 楷书}\quad4
+	
+	中文字体的\textbf{粗体}与\textit{斜体} 
+	%字体大小
+	{\tiny Hello}\\
+	{\scriptsize Hello}\\
+    {\normalsize Hello}\\%normalsiz大小的设置在初始化文档类时
+    {\small Hello}\\
+    {\normalsize Hello}\\
+    {\large Hello}\\
+    {\Large Hello}\\
+    {\LARGE Hello}\\
+    {\huge hello}\\
+    {\Huge hello}\\
+	
+    %中文字号设置命令
+    \zihao{-0}你好！\\
+    \zihao{5}你好！\\
+    \myfont
+\end{document}

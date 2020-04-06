@@ -1,0 +1,17 @@
+\documentclass{ctexart}
+
+\usepackage{ctex}
+%\usepackage[round]{natbib}
+
+\bibliographystyle{plain}%plain unsrt alpha abbrv,指定样式,plainnat
+\begin{document}
+
+	%参考文献数据库是极易出错和繁琐的，可以使用google学术搜索实现文献的管理和维护，1搜索bibtex，2点击引用链接点击Bibtex，3可以得到.bib数据，4添加数据库中，5通过引用标志引用该文献。知网需要zotero浏览器，https://www.zotero.org/download/ Firefox Extension
+	%可以把所用参考文献放入一个参考文件数据库中操作
+	这是一个参考文献引用：\cite{hadash2018estimate}
+	\nocite{*} %排版所用未引用的参考文献
+	
+	\bibliography{test}%指定参考文献数据库,多个数据库中间用逗号隔开
+	
+	
+\end{document}

@@ -1,0 +1,144 @@
+\documentclass{article}
+\usepackage{ctex}
+\title{git笔记}
+\author{Shixiang yan}
+\date{\today}
+
+\begin{document}
+	\maketitle
+	\section{设置公匙}
+	ssh-keygen -t rsa
+	
+	cd ~/.ssh
+	
+	cat id\_rsa.pub
+	\section{添加到github}
+	setting
+	
+	SSH and GPGkeys
+	
+	New SSH key
+	
+	测试：ssh -T git@github.com(显示：successfully authenticated)
+	\section{全局配置}
+	git config --global user.name 'y809777421'
+	
+	git config --global user.email'shxiangyan@gmail.com'
+	\section{push文件}
+	
+	git init
+	
+	git pull
+	
+	git status
+	
+	git add .
+
+        (git rm --cached <file>删除提交到本地缓存库的文件，还原没有add之前的状态)
+        (git checkout -- <file> 取消改变文件操作)
+        
+        (git reset --hard HEAD 把add的文件转换为没有add的状态)
+
+
+        git commit -m 'information'
+
+	
+	git remote add origin git@github.com:y809777421:xiaoli.git(给git地址添加别名,之后的origin代替git链接)
+	
+	git push -u origin master(第一次推送需要加上-u)
+	
+	\section{更改仓库地址}
+	git remote rm origin
+	
+	git remote add origin [url]
+
+
+
+        \section{版本回退}
+        首先查看版本列表：
+        git log
+        git lg
+        git log --pretty=oneline 一个版本显示一行信息
+        git log --oneline 一行信息减少(推荐)
+        git reflog
+
+        git reset --hard 哈希值
+          三个参数：
+          --soft(本地库)绿色
+          --mixed(本地库、工作区)红色
+          --hard(本地库、暂存区、工作区)
+
+          \section{比较文件的修改情况}
+          git diff <file\_name>
+          git diff HEAD 比较所有修改的文件
+
+          \section{分支操作}
+          查看所拥有的所有分支 类似screen的C-a w操作
+          git branch -v
+
+          创建分支
+          git branch 分支名 类似C-a c和screen -S session名
+          在各分支操作不影响master分支，并且各分支操作后可以合并到master分支
+
+          git push origin 分支名
+          
+          切换分支
+          git checkout 分支名 类似C-a H\_or\_L
+
+          合并分支(合并指的是将在从文件中做的修改加载到主文件上，commit以后才能进行合并)
+          首先切换的到被合并的分支 ：git checkout master
+          其次：git merge 分支名  要合并的分支名
+
+          同时修改同一文件产生冲突.
+          <<<<<指示当前分支的内容
+          =====
+
+          >>>>>>从另一个分支中merge的内容
+          (这些符号需要修改)
+
+          \section{团队合作}
+          邀请成员：
+          仓库：setting->collaborators->输入邀请人的gitbhu账号->复制链接->被邀请人登录账号访问连接
+
+          pull=feach+marge
+          
+          (从远程仓库抓取:git fetch origin master
+          
+          抓取以后本地文件并没有变,
+          git checkout origin/master查看在远程master的内容
+
+          git checkout maseter
+          
+          git merge origin/master 将远程的maser合并到本地)(git pull origin master)
+
+
+          \section{多团队协作}
+          folk->pull requset
+          1.folk
+          2.克隆到本地
+          3.本地修改然后推送
+          4.pull request->new pull request->create pull request
+          5.主人点pull request->merge pull request(files change查看文件的修改)->comfirm marge
+          
+          
+          
+          
+
+          
+
+          
+	\begin{thebibliography}{99}
+		\bibitem{website1}
+		\emph{在Ubuntu18.04系统中向GitHub提交代码}2020.
+		Available at \texttt{https://ywnz.com/linuxjc/2401.html}.
+		\bibitem{website2}
+		\emph{GitHub 系列之「向GitHub 提交代码」}2020.
+		Available at \texttt{https://www.jianshu.com/p/d136dee10561}.
+		\bibitem{website3}
+		\emph{git修改远程仓库地址}2020.
+		Available at
+		\texttt{https://ddnode.com/2015/04/14/git-modify-remote-responsity-url.html}.
+	\end{thebibliography}
+	
+	
+\end{document}

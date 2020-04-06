@@ -1,0 +1,1 @@
+$xelatex = 'xelatex --halt-on-error %O %S';

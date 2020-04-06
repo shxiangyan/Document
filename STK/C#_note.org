@@ -1,0 +1,277 @@
+* 基本
+** Console
+创建项目
+Visual C# ->Console Application ->Name ->Console.WriteLine("Hello,Worle!");(阻止一闪而过DEBUG ->start Without Debugging
+或Ctrl+F5)
+
+** Windows Forms
+Hello World
+在窗体上添加一个显示框：TextBox，Name起一个名字textBoxShowHello
+添加一个按钮：Button  (Text字段修改Button的显示，Name字段给Button起一个名字)
+双击Button 或者在Properties点击闪电的符号
+textBoxShowHello.Text="Hello,Wellow";
+
+** WPF(Windows Presentation Foundation)
+Hello World
+设置渐变色：点击窗体->Brush->渐变色
+添加一个Textbox (Name 起一个名字,Text中去掉默认显示的内容)
+添加一个Button (Name起一个名字，Content 更改显示内容)
+textBoxShowHello.Text="hello,world"
+** ASP.NET Web Application
+新建项目 ->MVC 
+反键Controllers ->add ->Controller ->MVC 5 Controller-Empty(会访问index()下的View())
+反键index()函数内 ->add View ->add (自动在views下的Home添加一个inde.cshtml文件)->修改<h2></h2>
+反键项目 ->PUBlish
+** Cloud 
+新建项目windows Azure Cloud Service
+选择ASP.NET Web Role ->MVC 之后与MVC一样
+** Java Scripe
+Web ->ASP.NET Web Application->Empty->Web From 
+反键项目名-> add HTML Page
+在<body></body>中添加<h1>Hello,ASP.NET!</h1> 
+<head>
+  <scripe>  #在该标签编写JS代码
+    function ButtonClicked()
+    {
+      var myVar=100;  #声明变量
+      myVar="Mr.Okay!";
+      alert(myVar);
+    }
+  </scripe>
+</head>
+<body>
+  <h1>Hello,ASP.NET!</h1> 
+  <input type="button" value="Click Me" onclick="ButtonClicked()"/>
+</body>
+
+* 名词解释
+** 类(class)构成程序的主体，F1打开帮助文档
+*** 类的三大成员
+**** 基本用法
+创建实例:  new class_name()  ,e.g.(new Form()).ShowDialog();
+创建实例化对象
+From myFrom;  首先声明变量,myFrom是类From的一个实例化对象。
+myFrom = new From();  #这两句也可以合为一句 From myFrom= new From();
+
+myFrom.Text="My Form!"
+myFrom.ShowDialog()!
+
+**** 属性(Property)
+存储数据，组合起来表示类或对象当前的状态
+
+例如数据库的类，
+添加数据库类：
+反键项目名 ->Add ->New Item ->Data ->ADO.Net Entity Data Model ->Name处更改类名 -> Add ->Greate from database -> New Connection ->Microsoft SQL Server ->continue ->(local)Server name ->Log on to the server (Use Windows Authentication)->connect to a database AdventureWorksLT2012 ->views ->选表(表名就是属性)
+类名 proxy=new 类名();
+foreach (Product p in proxy.Products):    #打印表中的全部内容，Product作用未知
+{
+  Console.Writeline(p.Name);
+}
+Console.Writeline(proxy.Products.Count());  #打印表中内容的数目
+**** 方法(Method)函数
+例如Math类
+double x=Math.Pow(2,3);
+console.WriteLine(x)
+**** 事件(Event)
+类或对象通知其它类或对象的机制。
+Using System.Windows.Threading
+DispatcherTimer timer =new DispatcherTimer();
+timer.Interval=TimeSpan.FromSeconds(1)   #间隔多少次触发一次事件,间隔1秒触发一次事件
+timer.Tick += timer_Tick;  #挂接事件处理器在timer.Tick+=   之后按两次Tab键  ，表示下面的函数挂接到当前的time.Tick, 表示当time.Tick发生的时候会执行下面的函数timer_Tick
+timer.Start()
+void timer_Tick(object sender,EventArgs e)
+{
+  this.timeTextBox.Text=DateTime.Now.ToString();
+#  throw new NotlmplementedExce();
+}
+
+*** 类的静态成员与实例成员
+**** 静态(Static)成员在语义上表示它是"类的成员"
+Console.WriteLine("Hello")
+**** 实例(非静态)成员在语义表示他是"对象的成员"
+From feom =new From();
+feom.Text="Hello"
+feom.ShowDialog();
+**** 绑定(Binding)指的是编译器如果把一个成员与类或对象关联起来
+
+*** 类库
+查看类库:References
+**** DLL类库引用(黑盒引用,无源码)
+添加(方法一) :
+反键 References ->Add References ->Browse ->select&add 
+using 类库的命名空间
+(方法二)
+反键References ->Manage NuGet Packages ->install
+**** 项目引用(白盒引用，有源代码)
+反键 solution -> Add Existing Project ->选择类库源码 (首先将要引用的代码加入解决环境)
+反键 References ->Add References ->Solution ->select&add 
+创建类库项目:
+反键 solution ->Add New Project ->Class Library
+namespace xxx  (该名称就是在解决环境中引用类库需要的名称，默认该名称与项目名相同，using xxx)
+
+*** 类简单使用
+class Program
+{
+  static void Main(string[] args)
+  {
+    Calculator c=new Calculator();
+    c.Add(2,3);
+    string str =c.Today();  #返回的是string类型所以要用string变量来接收
+  }
+}
+class Calculator
+{
+  public int Add(int a,int b)  #加上public表示类外部也能访问该方法
+  {
+    int result=a+b;
+    return result;
+  }
+  public string Today()
+  {
+    int day=Datetime.Now.Day;
+    return day.ToString()；    #将整形转换为string类型
+  }
+  public void PrintSum(int a,int b)
+  {
+    int results=a+b ;
+    Console.WriteLine(results);
+  }
+  public void PrintXTo1(int x)
+  {
+    for (int i=0;i<x;i++)  #输入for连敲两次tab  会出现for的主体
+    {
+      Console.WriteLine(i);
+    }
+  }
+  public void PrintXTo2(int x)
+  {
+    if (x==1)
+    Console.WriteLine(x);
+    else
+    {
+      Console.WriteLine(x);
+      PrintX(x-1);
+    }
+  }
+  
+}
+** 名称空间(namespace)以树形结构组织类。
+用法:using namespace
+例如:using System
+命名空间把类组织起来，方便另外的模块调用
+如果没有引用System 命名空间扔想用Console，System.Console.writeline("Hello World")
+
+** 堆栈
+堆：类的实例
+List<Window> winList;  #声明一个类型为List<Window>的变量winList；
+private void Button1_Click(object sender,RoutedEventArgs e)
+{
+  winList=new List<Window>();  实例化一个类List<Window>对象winList
+ for(int i=0;i<15000;i++)
+ { 
+   Window w=new Window();    实例化一个Window的对象w
+   winList.Add(w);          将w添加到winList中
+ }
+}
+private void Button2_Click(object sender,RoutedEventArgs e)
+{
+  winList.Clear();
+}
+
+栈：方法调用
+* 基本元素
+** 关键字(Keyword)
+help ->Visual Basic and Visual C# ->Visual C# -> C# Reference
+var 变量名    var声明一个变量，C#自动推断变量的类型  ，e.g. var x=100  ，任何对象都有Gettype方法打印类型，Console.WriteLine(x.GetType().Name)
+
+dynamic 不限类型
+dynamic myVar=100;
+Console.WriteLine(myVar);
+myVar="Mr.Okay"
+COnsole.WriteLine(myVar);
+
+** 操作符(Operator)
+** 标识符(Identifier)
+** 标点符号
+** 文本
+** 注释与空白
+Ctrl e c
+Ctrl k u 取消注释
+/*   */
+//
+Ctrl e d 代码格式化
+* Debug 
+1.代码在前面添加红点
+2.start Debugging 
+3.step Into(F11)
+* 操作符
+* 表达式
+* 字段、属性、索引器、常量
+* C#语言的类型系统
+引用类型：类、接口、委托；值类型：结构体、枚举
+** 结构体(Structures)：Int32，Int64，Single，Double
+** 枚举(Enumerations)：HorizontalAlignment，Visibility  关键字enum
+static void Main(string[] args)
+{
+  From f=new From();
+  f.WindowState=FromWindowState.Maximized;  minimized normal
+  f.showDialog();
+}
+
+** 类 (Classes):如window，From，Console，String
+** 接口(Interfaces)
+** 委托(Delegates)
+* 变量
+int 4B 32字节
+long 8B  用法long y; y=100L;  
+bool     用法bool b; b=true;
+byte 8b  0-255
+sbyte 8b -128-127
+char 2B
+short 2B -32768-32767
+ushort 2B 0-65535
+float
+double 
+
+查看类型：
+Type myType=typeof(From);
+Console.WriteLine(myType);
+Console.WriteLine(myType.FullName);
+Console.WriteLine(x.GetType().Name);
+ProPertyInfo[] plnfos=myType.GetProperties();  #打印全部属性
+MethodInfo[] mInfos=myType.GetMethods();   #打印全部方法
+foreach(var p in plnfos)
+{
+  Console.WriteLine(p.Name);
+}
+foreach(var m in mInfos)
+{
+  Console.WriteLine(m.Name);
+}
+** 成员变量
+class Program 
+{
+  static void Main(string[] args)
+  {
+    Student.Amount;
+    Student stu=new Student();
+    Console.WriteLine(Stu.Age=1);
+    int[] array=new int[100]; #声明长度为100的数组变量， #数组元素
+  }
+}
+class Student 
+{
+  public static int Amount;  #静态成员变量
+  public int Age；  #实例变量
+  Public string Name;    
+  int x;局部变量
+    
+    #值参数
+  public double Add(double a,double b,out double c,ref double d)  #ref修饰，就是引用参数；out修饰，就是输出参数
+  {
+    return a+b;
+  }
+    #引用参数
+    #输出参数
+}
+

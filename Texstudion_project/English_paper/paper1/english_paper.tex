@@ -1,0 +1,103 @@
+\documentclass[times,twoside,watermark]{zHenriquesLab-StyleBioRxiv}
+\usepackage{blindtext}
+
+% Please give the surname of the lead author for the running footer
+\leadauthor{Henriques} 
+
+\begin{document}
+
+\title{Henriques Lab bioRxiv template}
+\shorttitle{My Template}
+
+% Use letters for affiliations, numbers to show equal authorship (if applicable) and to indicate the corresponding author
+\author[1,\Letter]{Ricardo Henriques}
+
+\affil[1]{Quantitative Imaging and Nanobiophysics Group, MRC Laboratory for Molecular Cell Biology and Department of Cell and Developmental Biology, University College London, Gower Street, London, WC1E 6BT, United Kingdom}
+
+\maketitle
+
+%TC:break Abstract
+%the command above serves to have a word count for the abstract
+\begin{abstract}
+\blindtext
+\end {abstract}
+%TC:break main
+%the command above serves to have a word count for the abstract
+
+\begin{keywords}
+bla | bla | bla | bla
+\end{keywords}
+
+\begin{corrauthor}
+%\texttt{r.henriques{@}ucl.ac.uk}
+r.henriques\at ucl.ac.uk
+\end{corrauthor}
+
+\section*{Introduction}
+\Blindtext
+
+\section*{Results}
+
+Just for kicks here's a citation \cite{Gustafsson2016}. And a reference to a supplement \cref{note:Note1}. And \nameref{note:Note1}.
+\Blindtext
+
+\begin{figure}%[tbhp]
+\centering
+\includegraphics[width=.8\linewidth]{Figures/Figure_1}
+\caption{Placeholder image of Iris with a long example caption to show justification setting.}
+\label{fig:computerNo}
+\end{figure}
+
+\Blindtext
+
+Figure \ref{fig:computerNo} shows an example of how to insert a column-wide figure. To insert a figure wider than one column, please use the \verb|\begin{figure*}...\end{figure*}| environment. Figures wider than one column should be sized to 11.4 cm or 17.8 cm wide. Use \verb|\begin{SCfigure*}...\end{SCfigure*}| for a wide figure with side captions.
+
+\section*{Conclusions}
+
+blablaba \ref{fig:computerNo} 
+\blindtext
+
+\subsection*{Blabla} 
+\blindtext
+
+\section*{Conclusions}
+
+blablaba \ref{fig:computerNo}
+\blindtext
+
+\begin{acknowledgements}
+\blindtext
+\end{acknowledgements}
+
+\section*{Bibliography}
+\bibliography{zHenriquesLab-Mendeley}
+
+%% You can use these special %TC: tags to ignore certain parts of the text.
+%TC:ignore
+%the command above ignores this section for word count
+\onecolumn
+\newpage
+
+\section*{Word Counts}
+This section is \textit{not} included in the word count. 
+\subsection*{Notes on Nature Methods Brief Communication}
+\begin{itemize}
+\item Abstract: 3 sentences, 70 words.
+\item Main text: 3 pages, 2 figures, 1000-1500 words, more figures possible if under 3 pages
+\end{itemize}
+
+\subsection*{Statistics on word count}
+\detailtexcount
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Supplementary Information %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\captionsetup*{format=largeformat}
+\section{Something about something} \label{note:Note1} 
+\Blindtext
+
+%TC:endignore
+%the command above ignores this section for word count
+
+\end{document}

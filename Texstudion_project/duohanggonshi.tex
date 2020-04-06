@@ -1,0 +1,49 @@
+\documentclass{ctexart}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\begin{document}
+	%gather和gather*环境（可以使用\\换行）
+	%带编号
+	\begin{gather}
+		a+b=b+a\\
+		ab=ba
+	\end{gather}
+	%不带编号
+	\begin{gather*}
+		a+b=b+a\\
+		ab=ba
+	\end{gather*}
+	%使用notag阻止编号,表示该行不编号
+	\begin{gather}
+		a+b=b+a \notag\\
+		ab=ba 
+	\end{gather}
+	%align和align*环境（用&进行对齐）,可以是任意位置
+	%带编号
+	\begin{align}
+		x&=t+\cos t+1\\
+		y&=2\sin t
+	\end{align}
+	
+	\begin{align}
+	x&=t & x&=t+\cos t+1&x&=t\\
+	y&=2t& y&=2\sin t   &y&=\sin t
+	\end{align}
+	%sqlit环境（对齐采用align环境的方式，编号在中间）
+	\begin{equation}
+		\begin{split}
+		\cos 2x&=\cos^2 x-\sin^2 x\\
+			&=2\cos^2 x-1
+		\end{split}
+	\end{equation}
+	%cases环境
+	%每行公式中使用&分隔为两部分，
+	%通常表示值和后面的条件
+	\begin{equation}
+		D(x)=\begin{cases}
+		1,&\text{如果}x\in \mathbb{Q};\\%\in用于输出属于符号，\mathbb用于输出花体字符，数学模式的\text命令用于切换到临时文本模式
+		0,&\text{如果}x\in \mathbb{R}\setminus\mathbb{Q}.
+		\end{cases}
+	\end{equation}
+	
+\end{document}

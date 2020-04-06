@@ -1,0 +1,10 @@
+sudo service bluetooth start
+sudo bluetoothctl
+
+power on
+agent on
+default-agent
+scan on
+pair your DeviceMAC
+trust your Devicemac
+connect your Devicemac

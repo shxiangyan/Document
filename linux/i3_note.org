@@ -1,0 +1,20 @@
+* 快捷键
+Mod4+h 垂直
+Mod4+v 水平
+Mod4+e (旋转)
+Mod4+s (全部合并)
+Mod4+a    focus parent
+Mod4+shift+<space>拿出来
+Mod4+w 标签卡模式不好用
+
+Mod-shift-r 重新加载i3
+Mod4+shift+x monitor
+Mod4+shift+b config文件
+S-<enter>终端
+Mod4+z 选择截屏
+Mod4+x 接当前屏幕
+Mod4+shift+z 截全屏
+Mod4+shift+c tor
+* google快捷键
+https://www.runoob.com/w3cnote/google-chrome-shortcuts.html
+详见简书

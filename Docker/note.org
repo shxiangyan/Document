@@ -1,0 +1,763 @@
+* 命令
+查看版本：docker version
+查看存储驱动：docker info
+查找名为tutoral的镜像：docker search tutorial
+从仓库下载镜像：docker pull learn/tutorial(用户名和镜像名)
+在容器中运行echo命令（run命令启动一个容器）：docker run learn/tutorial echo 'hello world'
+(可写层)在容器中安装ping命令：docker run learn/tutorial apt-get install -y ping
+查看有那些容器正在运行：docker ps -l刚才打开的容器
+提交镜像：docker commint ID learn/ping(新名字)
+* 容器操作
+** 运行交互式容器
+*** 运行完就结束
+新镜像运行一个容器：docker run IMAGE[COMMAND][ARG...] docker run learn/pin ping www.google.com 
+*** 启动交互式容器
+docker run -i -t IMAGE /bin/bash ->docker run -i -t ubuntu /bin/bash类似使用虚拟机
+-i --interactive==true(创建交互式进程)
+-t --tty=true(为创建的容器分配一个tty终端，这样新创建的容器会提供一个交互式的shell)
+*** 其他
+自定义容器名：docker run --name==自定义容器名 -i -t IMAGE /bin/bash
+重启容器：docker start -i 容器名
+** 运行守护式容器
+*** 定义
+能够长期运行
+没有交互式会话
+适合运行应用程序和服务
+*** 方式一：
+在运行交互式容器(docker run -i -t ubunt /bin/bash)时,
+C-p C-q
+进入正在运行的容器：docker attach 容器名
+*** 方式二：
+docker run -d IMAGE [command][ARG...]
+*** 查看日志
+docker logs [-f][-t][--tail]容器名
+-f --follows=true(跟踪日志的变化并返回结果)
+-t --timestamps(在返回的结果上加上时间戳)
+--tail='all'(返回结尾多少数量的日志,若不指定会返回全部数量的日志)
+*** 在运行的守护容器中启动新进程
+docker exec[-d][-i][-t]容器名 [command][ARG...]
+例如，在dc1中开启/bin/bash:docker exec[-i][-t]dc1 /bin/bash
+查看容器中的进程：docker top 容器名
+*** 停止守护容器
+docker stop容器名
+docker kill 容器名(速度快)
+
+** 在容器中部署静态网站
+*** 设置端口映射
+run[-P][-p]
+-P，--publish-all(将为容器暴露的所有端口进行映射)->docker run -P -i -t ubuntu /bin/bash
+-p,--publish=[](指定映射那些容器的端口)->docker run -p 80 -i -t ubuntu /bin/bash
+**** 四种格式 
+containerPort(只指定容器的端口,宿主机的端口是随机映射的)->docker run -p 80 -i -t ubuntu /bin/bash
+hostPort:containerPort(同时指定宿主机端口和容器端口，端口一一对应,主流)->docker run -p 8080:80 -i -t ubuntu /bin/bash
+ip::containerport(指定ip和容器的端口)->docker run -p 0.0.0.0:80 -i -t ubuntu /bin/bash
+ip:hostport:containerport(指定ip宿主机端口以及容器端口)->docker run -p 0.0.0.0:8080:80 -i -t ubuntu /bin/bash
+
+*** 部署Nginx
+**** 创建80端口的交互式容器
+docker run -p 80 --name==web -i -t ubuntu /bin/bash
+**** 安装Nginx
+apt-get install -y nginx
+**** 安装文本编辑器vim
+apt install vim
+**** 创建静态页面
+mkdir -p /var/www/html
+cd /var/www/html
+vim /var/www/html/index.html
+**** 编辑nginx配置文件
+whereis nginx
+vim /etc/nginx/sites-enabled/default
+修改/usr/share/nginx/html->/var/www/html
+**** 运行Nginx
+nginx
+ps -ef
+C-p C-q
+exit
+**** 验证网站访问
+docker ps
+查看容器端口的映射情况：docker port web 
+查看容器中进程的情况：docker top web ->"80/tcp ->0.0.0.0:49167"
+curl http://127.0.0.1:49167
+容器ip访问
+docker inspect web
+找到IPAddress
+http://IPAddress
+**** 重启
+docker stop web
+docker start -i web
+ps -ef
+exit
+docker exec web nginx
+docker top web
+重启以后容器的ip地址和端口映射都会发生改变
+
+** 容器的数据管理
+*** Docker容器的数据卷
+**** 概念
+作用：共享数据。
+是什么：特殊设计的目录，可以绕过联合文件系统(UFS)，为一个或多个容器提供访问。
+设计目的：在于数据的永久化，它可以完全的独立与容器的生存周期，因此，Docker不会在容器删除时删除其挂载的数据卷，也不会存在类似垃圾收集机制，对容器引用的数据卷进行处理。
+存在位置：存在于宿主机中，Docker容器可以利用数据卷技术与宿主机进行数据共享，同一个目录可以支持多个容器访问(实现容器间数据交互)。
+特点：
+1.数据卷在容器启动时初始化，如果容器使用的镜像挂载点包含了数据，这些数据会拷贝到新初始化的数据卷中。
+2.数据卷可以在容器之间共享和重用。
+3.可以对数据卷里的内容直接进行修改
+4.数据卷的变化不会影响镜像的更新
+5.卷会一直存在，即使挂载数据卷的容器已经被删除
+**** 操作 
+为容器添加数据卷
+sudo docker run -v ~/container_data:/data -it ubuntu /bin/bash(-v选项指定数据卷在本机的目录以及在容器中映射目录名)
+docker ps -l(查看容器号)
+docker inspect 容器名或容器号  ，在volumes字段可以看到容器是否挂载数据卷，volumes的数据卷对应的是数据卷在宿主机的位置
+为数据卷添加访问权限：
+sudo docker run -v ~/datavolume:/data:ro --name dvt1 -it ubuntu /bin/bash(ro表示该数据卷只读)
+使用Dockerfile构建包含数据卷的镜像
+Dockerfile指令 ：(在Dockerfile创建的数据卷不能映射到已经存在的本机文件目录中，在镜像构建时指定的数据卷，会在容器启动时创建指定名字的数据卷，并且运行同样镜像的不同容器所创建的数据卷也是不一样的)
+VOLUME["/data"]
+步骤：
+在dockerfile中添加：VOLUME["/data/volume1","/data/volume2"]
+FROM ubuntu:14.04
+VOLUME["/datavolume1","/datavolume2"](该部分声明的路径是在容器中路径)
+CMD /bin/bash
+docker build -t shxiangyan/dev .
+docker run --name dv3 -it shxianyan/dev (新创建的容器会挂载指定的两个目录，并在宿主机/var/lib/docker/vfs/dir/XXX,中随机生成宿主机数据卷文件夹)
+docker inspect dv3
+再次生成一个容器：docker run --name dv4 -it shxiangyan/dvt 
+会在宿主机再次挂载两个目录作为数据卷。
+在镜像启动时在VOLUME指定的数据卷都会经过完整的初始化。根据镜像指定数据卷创建的容器，所使用的数据卷没有办法共享。
+
+*** Docker的数据卷容器
+当不能访问本地目录时，在容器之间共享数据。
+定义：命名的容器挂载数据卷，其他容器通过挂载这个容器实现数据共享，挂载数据卷的容器，就叫做数据卷容器。
+挂载数据卷容器的方法：docker run --volumes-from[CONTAINER NAME](用--volumes-from指定新建容器所连接的数据卷容器，CONTAINER NAME是已经挂载了数据卷的容器的容器名字)
+首先要有一个拥有数据卷的容器：docker run -it --name dvt4 shxianyan/dvt 
+然后新容器挂载到以上容器的数据卷上：docker run --volumes-from dvt4 --name dvt5 ubuntu /bin/bash -it
+指定查看某字段的信息：docker inspect --format="{{.Volumes}}" dvt5   ->直接返回数据卷在宿主机的目录
+*** Docker数据卷的备份和还原
+数据备份方法：
+docker run --volumes-from [container name] -v $(pwd):/backup ubuntu tar cvf /backup/backup.tar [container data volume]
+--volumes-from指定需要备份的容器名,-v指定备份文件存放的位置(本地位置：容器中位置:权限) 操作系统 备份文件的命令(文件存在的地址) 需要备份的目录
+启动容器：docker restart dct5
+进入容器：docker attach dvt5
+启动新的容器执行备份命令：docker run --volumes-from dvt5 -v ~/backup:/backup:wr --name dvt6 ubuntu tar cvf /backup/dvt5.tar /datavolume1
+* 镜像操作
+** 查看镜像和删除镜像
+*** 列出镜像
+docker image [OPTSIONS][REPOSITION]
+-a --all=false 显示所有镜像
+-f --filter=[] 过滤条件
+--no-trunc=false 不截断镜像ID
+-q --quiet=false 只显示镜像的ID
+*** 镜像标签和仓库
+仓库（repository）一系列镜像的集合。docker组件仓库（registry）docker镜像的存储服务。registry包含很多repository仓库，repository仓库中包含一个一个独立的镜像。
+不同的镜像以TAG区分，仓库名+标签名=构成镜像名，一个镜像对应一个镜像ID，镜像文件可以有多个TAG。
+
+*** 查看镜像
+docker inspect repository:TAG
+*** 删除镜像
+docker rmi [OPTIONS]repository:TAG
+-f -force=false
+--no-prune=false Do not delete untagged parents
+docker rmi image_ID
+删除ubuntu的所有镜像：docker rmi $(docker image -q ubuntu)
+** 获取和推送镜像
+*** 获取镜像
+方式一：Docker Hub的官方网站http://registry.hub.docker.com
+方式二：docker search [OPTIONS] TERM（最多显示25个结果）
+--automated=false (自动化构建出来的镜像)
+--no-trunc=0
+-s, --stars=0 限制显示结果的最低星级docker search -s 3 ubuntu
+*** 下载镜像到本地
+docker pull [options] name [:TAG]->docker pull ubuntu:18.04
+-a,--all-tags=false
+更改下载源：
+1.首先申请下载源地址：
+2.使用--registry-mirror选项
+修改：/etc/default/docker
+添加：DOCKER_OPTS="--registry-mirror=http://MIRROR-ADDR"(https://daocloud.io获取链接)
+curl -sSL https://get.daocloud.io/daotools/set_mirror.sh | sh -s http://f1361db2.m.daocloud.io
+ps -ef |grep docker,查看dockerd进程
+*** 上传DOcker
+docker push NAME[:TAG]->docker push shxiangyan/nginx
+
+** 构建镜像
+*** 保存对容器的修改，并再次使用
+**** 方式一：docker commit 通过容器构建镜像并提交到本地
+docker commit [OPTIONS]CONTAINER[REPOSITORY[:TAG]]e.g.docker commit -a 'yanshxiang' -m 'nginx' 容器名 shxiangyan/自定义镜像名
+-a,--author="",e.g."yanshixiang shxiangyan@gmail.com"
+-m,--message=""
+-p,--pause=true 令正在执行的容器不暂停
+
+使用本地镜像运行容器：docker run -d --name==nginx -p 80 shxiangyan/自定义镜像名 nginx -g "daemon off;"
+docker ps可以查看端口映射
+curl http://127.0.0.1:端口 
+
+**** 方式二：docker build 通过Dockerfile文件构建
+***** 使用docker build命令
+mkdir -p dockerfile/df_test1(递归创建文件夹)
+cd dockerfile/df_test1
+vim Dockerfile
+e.g.
+#First Dockerfile
+FROM ubuntu:18.04
+MAINTAINER shxiangyan "shxiangyan@gmail"
+RUN apt update
+RUN apt install -y nginx
+EXPOSE 80 
+
+docker build[OPTIONS]PATH|URL-
+--force-rm=false
+--no-cache=false
+--pull=false
+-q,--quiet=false 不显示构建过程
+-rm=true
+-t,--tag=""镜像的名字
+docker bulid -t="shxiangyan/df_test1" .
+用镜像启动容器：docker run -d --name==nginx -p 80 shxiangyan/自定义镜像名 nginx -g "daemon off;"
+****** dockerfile指令
+******* 指令格式
+#Comment    注释
+INSTRUCTION argument 指令(大写的指令名后加参数)
+******** FROM 
+FROM <image>
+FROM <image>:<tag>
+必须是已经存在的镜像，后续指令都会基于该镜像执行，该镜像也叫基础镜像
+必须是第一条非注释的指令
+
+******** MAINTAINER 
+指定镜像的作者信息，包含镜像的所有者和联系信息
+MAINTAINER shxiangyan "shxiangyan@gmail"
+******** RUN 
+指定当前镜像中运行的命令
+每一个RUN指令都会在当前镜像的上层创建一个新的镜像来运行指定的命令。
+RUN<command>(shell模式)
+/bin/sh -c command
+e.g.RUN echo hello
+e.g.RUN apt update && apt install -y nginx
+
+RUN["executable","param1","param2"](exec模式)
+RUN["/bin/bash","-c","echo hello"]
+
+******** EXPOSE 
+指定运行该镜像容器使用的端口，可以指定一个或多个端口，可以在一个dockerfile中使用多个expose命令
+并不会自动打开端口，仅告诉容器会使用特定的端口。当运行时，仍需要指定端口。
+EXPOSE<port>[<port>...]
+docker run -p 80 -d shxiangyan/df_text1 nginx -g "daemon off;"
+******** CMD
+提供容器运行的默认命令
+CMD ["executable","param1","param2"](exec模式)
+e.g.CMD["/usr/sbin/nginx","-g","daemon off"]
+docker build -t="shxiangyan/df_text1"
+docker run -p 80 --name 容器名 -d shxiangyan/df_text1
+若指定运行的命令则会覆盖dockerfile中定义的命令：docker run -p 80 --name 容器名 -d shxiangyan/df_text1 /bin/bash
+查看 
+docker ps 
+docker top 容器名
+CMD command param1 param2(shell模式)
+run指定的是在容器构建时运行的，CMD指定的是在容器运行时执行的
+CMD["param1","param2"](作为ENTRYPOINT指令的默认参数)，指定一些参数，与ENTRYPOINT搭配使用
+******** ENTERYPOINT
+ENTRYPOINT["executable","param1","param2"](exec模式)
+ENTRYPOINT command param1 param2(shell模式)
+ENTRYPOINT命令是不会被覆盖的dockerfile命令，可以使用docker run --entrypont覆盖
+ENTRYPOINT["/usr/sbin/nginx","-g","daemon off"]
+CMD["-g"]
+docker run -p 80 -d --name ep_text shxiangyan/df_test1
+******** ADD
+将文件和目录复制到docker构建的镜像中，支持两个参数，原地址和目标地址
+ADD<src>...<dest>
+ADD["<src>",..."<dest>"](适用于文件路径中有空格的情况)
+文件或者目录的来源可以是本地地址也可以是远程的URL,如果是本地地址必须是构建目录中的相对地址,推荐CURL或wget获取文件.目标路径必须是镜像的绝对路径
+ADD包含类似tar的解压功能
+如果是单纯的复制文件,docker推荐使用copy
+******** COPY
+COPY <src>...<dest>
+COPY["<src>","<dest>"](适用于文件路径中有空格的情况)
+COPY index.html /usr/share/nginx/html/(使用本地编写的网页替换nginx的默认网页,该index.html文件与DOckerfile在同一目录下)
+docker run -d -p 80 --name cp_test shxiangyan/df_test1
+******** VOLUME
+为基于镜像创建的容器添加卷,一个卷可以存在一个或多个容器的特定目录,提供数据共享,数据持久化的功能.
+VOLUME["/data"]
+******** WORKDIR
+从镜像创建一个新容器时,在容器内部设置工作目录,ENTRYOINT,CMD指定的命令都会在该目录下执行.可以使用该命令在构建中为后续的指令指定工作目录.
+WORKDIR /path/to/workdir(使用绝对路径)
+******** ENV
+用来设置环境变量,与workdir命令类似
+ENV<key><value>
+ENV<key>=<value>...
+ENV REFRESH_DATE 2015-04-01
+******** USER
+指定镜像为什么样的用户运行
+USER nginx(基于该镜像启动的容器就会以nginx的身份来运行)
+USER user                    USER uid
+USER user:group              USER uid:gid
+USER user:gid                USER uid:group
+默认root用户
+
+******** ONBUILD
+为镜像添加触发器，当一个镜像被其他镜像作为基础镜像时，该触发器将会被执行。当次镜像别构建时会插入触发器中的指令
+ONBUILD[INSTRUCTION]
+ONBUILD COPY index.html /usr/share/nginx/html/
+
+#First Dockerfile
+FROM ubuntu:18.04
+MAINTAINER shxiangyan "shxiangyan@gmail"
+RUN apt update
+RUN apt install -y nginx
+EXPOSE 80 
+
+docker build -t="shxiangyan/df_test1" .
+
+docker run -p 80 -d --name ob_test1 shxiangyan/df_test7
+
+#First Dockerfile
+*FROM* shxiangyan/df_test7
+MAINTAINER shxiangyan "shxiangyan@gmail"
+RUN apt update
+RUN apt install -y nginx
+EXPOSE 80 
+
+docker build -t="shxiangyan/df_test2" .
+
+docker run -p 80 -d --name ob_test1 shxiangyan/df_test2 
+
+****** dockerfile构建过程
+******* 排除错误
+从基础镜像运行一个容器，from指定基础镜像
+执行一条指令，对容器做出修改
+执行docker commit的操作，提交一个新的镜像层
+在基于新的镜像运行一个新的容器
+执行Docker中的下一条指令，直到所有指令执行完毕
+
+使用中间层镜像进行调试
+docker run -it 中间层容器号 /bin/bash(进入中间层镜像)
+whereis nginx
+******* 构建缓存
+若有缓存的话构建容器时则不会去下载新的软件包
+不使用构建缓存方式一：
+docker build --no-cache
+方式二：
+使用ENV REFRESH_DATE 2020-02-01
+使用环境变量标识缓存刷新的时间，修改时间则会令缓存刷新
+******* 查看构建过程
+docker history[image]
+
+
+*** 自定义镜像的能力
+*** 以软件发形式打包并分发服务及运行环境
+** 查看
+查看正在运行的容器：docker ps
+查看全部容器：docker ps -a
+查看容器的配置信息：docker inspect ID
+查看都有那些镜像:docker images
+查看容器中的进程：docker top 容器名
+查看帮助文档：man docker-run
+保存到Docker HUB仓库中：docker push learn/ping 
+** 删除 
+删除容器：docker rm 容器名
+
+* Docker的C/S模式
+** 简介
+  Docker客户端运行Docker的各种命令，传递给Docker的宿主机上运行的Docker的守护进程，Docker负责实现docker的各种功能。
+[[./figure_Docke/C_S.jpg]]
+*** RemoteAPI
+*** 连接方式
+docker和守护进程通过socket连接
+方式一（unix端口）：unix://var.run/docker.sock
+方式二：tcp://host:port
+方式三：fd://socketfd
+查看docker进程：ps -ef | grep docker 
+
+** Docker守护进程的配置和操作
+*** 查看守护进程
+ps -ef |grep docker
+sudo status docker 
+*** 使用service命令管理
+sudo service docker start
+sudo service docker stop
+sudo service docker restart
+*** Docker的启动选项
+docker -d[options]
+运行相关(docker目录，日志级别，进程ID，写入文件地址，debug模式的开启，以及docker运行时所用到的驱动模式)
+-D,--debug=false
+-e,--exec-drive='native'
+-g,--graph='/var/lib/docker'
+--icc=true
+-l,--log-level='info'
+--label=[]
+-p,--pidfile="/var/run/docker.pid"
+服务器连接相关(用户组，连接socket选项，安全性连接tls)：
+-G ,--group="docker"
+-H ,--host=[]
+--tls =false
+--tlscacert="/home/yan/.docker/ca.pem"
+--tlscert="/home/yan/.docker/cert.pem"
+--tlskey="/home/yan/.docker/key.pem"
+--tlsverity=false
+存储相关：
+-s --storage-driver=""
+--selinux-enabled=false
+--storage-opt=[]
+Registry相关：
+--insecure-Registry=[]
+--registry-mirro[]
+网络设置相关(网桥配置，DNS服务器配置)：
+-b --bridge=""
+--bip=""
+--fixed-cidr=""
+--fixed-cidr-v6=""
+--dns=[]
+--dns-search=[]
+--ip=0.0.0.0 
+--ip-forward=true
+--ip-masq=true
+--iptables=true
+--ipv6=false
+--mtu=0
+**** 启动配置文件
+emacs /etc/default/docker
+更改宿主机的标签：DOCKER_OPTS="Label  name=docker_server_1"
+sudo docker restart
+*** Docker的远程访问
+Docker的客户端与守护进程不在同一个机器上
+**** 环境准备
+在第二台计算机安装Docker的服务器
+修改Docker守护进程启动选项，区别服务器(修改label)
+保证Client API与Server API版本一致
+**** 修改服务器的配置
+修改Docker守护进程启动选项
+-H tcp://host:port
+   unix:// /path/to/socker
+   fd://*or fd://socketfd
+守护进程默认配置：
+-H unix://var/run/docker.sock
+修改pc1电脑为(服务器)：
+DOCKER_OPTS="Label  name=docker_server_1 -H tcp://0.0.0.0:端口号"通常端口设为2375
+设置完以后会不支持本机连接
+所以要设置环境变量指向本机，或者设置-H选项，利用-H可以有多个参数的特性，在/etc/default/docker添加 -H unix://var/run/docker.sock
+
+
+用pc2电脑访问(客户端)：
+curl http://pc1_ip:端口/info
+修改Docker客户端启动选项
+-H tcp://host:port
+   unix:// /path/to/socker
+   fd://*or fd://socketfd
+客户端默认配置：
+-H unix://var/run/docker.sock
+docker -H tcp://pc1_ip:端口 info->返回Pc1docker的相关配置
+指定环境变量可以使远程连接像本机一样方便
+# emacs /etc/default/docker
+export DOCKER_HOST="tcp://pc1_ip:端口"
+export DOCKER_HOST=""返回 
+
+** Docekr容器的网络连接
+*** Docker容器的网络基础
+守护进程通过docker0为docker容器提供网络连接的各种服务
+docker0是linux的虚拟网桥
+网桥（数据链路层的一种设备）用来通过MAC地址（网络设备的物理地址）对网络进行划分并且在不同的网络之间传递数据
+linux虚拟网桥的特点：可以设置ip地址，相当于拥有一个隐藏的虚拟网卡。
+docker0的地址划分：
+IP：172.17.42.1   子网掩码：255.255.0.0
+MAC：02:42：ac:11:00:00~02:42:ac:11:ff:ff
+总过提供了65534个地址
+docker会根据ip的范围为每一个容器提供一个MAC地址避免MAC地址冲突。
+docker守护进程在一个容器启动时，需要创建网络连接的两端，一端是在容器中的网络设备，一端在运行docker守护进程的主机上。打开veth的一个接口用来实现docker0网桥与容器的网络通信。
+安装网桥管理工具：apt install bridge-utils
+查看网桥设备：sudo brctl show
+运行一个交互式容器，ifconfig，可以看到自动创建了eth0的网卡
+查看网桥（sudo brctl show）发现创建了一个网桥接口
+**** 自定义容器docker0
+sudo ifconfig docker0 192.168.200.1 network 255.255.255.0
+sudo service docker restart
+**** 自定义虚拟网桥
+添加虚拟网桥
+sudo brctl addbr br0
+sudo ifconfig br0 192.168.100.1 network 255.255.255.0
+更改docker守护进程的启动配置
+/etc/default/docker 中添加DOCKER_OPS
+-b=br0      DOCKER_OPTS="b=br0"
+
+sudo service docker restart
+ps -ef |grep docker
+*** Docker容器的互联
+**** 允许所有容器互联
+***** 环境准备
+用于测试的Docker镜像 Dockerfile:
+FORM unbuntu:18.04
+RUN apt install -y ping
+RUN apt update
+RUN apt install -y nginx
+RUN apt install -y curl
+EXPOSE 80 
+CMD /bin/bash
+
+docker build -t shxiangyan/cct .
+
+--icc=true 默认全部可以连接（run的选项）
+容器一：
+docker run -it --name cct1 shxiangyan/cct 
+nginx(启动nginx)
+C-p C-q
+容器二：
+docker run -it --name cct2 shxiangyan/cct 
+重新打开容器：docker attach cct1
+
+docker stop cct1 停止cct1
+
+容器的ip地址会随q容器的重启而改变（以ip地址连接是不可靠连接）
+
+docker run --link=[CONTAINER_NAME]:[ALIAS] [IMAGE][COMMOND](改选项指定了容器名以及该容器的代号，如果指定该选项，可以在新启动的容器中，以指定的代号访问到相应的容器，避免了因为IP地址变化而带来的影响)
+docker run -it --name cct3 --link=cct1:webtest shxiangyan/cct (启动容器cct3 同时给cct1一个别名，可以直接ping webtest)
+查看cct3环境变量env，发现有很多WEBTEST环境变量，这些变量是在容器启动时由docker添加的
+查看host文件：vim /etc/hosts,添加了webtest的地址映射
+重启docker：sudo service restart
+重启容器：docker restart cct1 cct2 cct3
+docker ps查看 
+重新进入容器cct3:docker attach cct3
+
+针对于指定的link选项的容器重新启动时，docker会自动修改ip地址和指定的容器间的映射
+
+**** 拒绝容器间互联
+令--icc=false(从true改为false)
+sudo emacs /etc/default/docker
+DOCKER_OPTS="-icc=false"
+查看：ps -ef |grep docker
+**** 允许特定容器间的连接
+docker利用iptables机制，在-icc=false时阻断docker间的数据访问，仅允许用--link选项配置的容器进行相互间的访问
+设置docker启动项
+--icc=false --iptables=true (允许DOcker容器将配置添加到linux的iptable设置中，iptables是linux用来控制网络访问的重要组成组件)
+--link
+emacs /etc/default/docker
+DOCKER_OPTS="--icc=false --iptables=true"
+docker run -it --name cct4 --link=cct1:webtest shxiangyan/cct
+查看iptables：sudo iptables -L -n 
+清空iptables:sudo iptable -F 
+*** Docker容器与外部网络的连接
+**** ip_forward
+--ip-forward=true(本身是Linux中的一个变量，他的值决定了系统是否会转发流量。在docker守护进程的默认参数中也有--ip-forword选项默认是true，即允许流量转发，这时可以使用系统自带工具查看数据转发是否开启)
+查看ip-forward的值：sysctl net.ipv4.conf.all.forwarding
+
+**** iptables
+iptables是与Linux内核集成的包过滤防火墙系统。
+表(table):nat、mangle、ran数据表
+链(chain):数据处理中的工作环节，不同的阶段
+规则(rule)：每个链下的操作ACCEPT、REJECT、DROP
+filter表中包含的链：
+INPUT
+FORWARD
+OUTPUT
+查看iptable中filter表(也可以不用-t指定，因为默认指定的就是filter表)
+sudo iptables -t filter -L -n
+**** 通过端口映射访问
+docker run -it -p 80 --name cct5 shxiangyan/cct 
+查看端口的对应情况：
+docker port cct5   80/tcp->0.0.0.0:49153   80端口表示容器tcp端口，49153表示访问宿主机该端口，相当于访问tcp/80端口 
+iptables中会添加一行ACCEPT的记录，0.0.0.0source->表示允许外界的主机可以通过ip:49153访问该主机的cct5容器的80/tcp端口提供的TcP服务
+curl IP:49153可以正常访问
+**** 通过iptables限制ip访问容器
+添加规则来阻止和特定IP对docker中容器访问
+查看iptables规则：sudo iptables -L -n 
+阻止特定ip访问服务：
+创建cct6：docker run　-it -p 80 --name cct6 shxiangyan/cct 
+添加iptables规则：sudo iptables -I DOCKER -s 源主机ip -d 目的容器ip -p TCP --dport 80 -j DROP
+查看iptables规则：sudo iptables -L -n 发现多了一条DROP的规则
+允许特定的ip访问特定的容器：
+
+** Docker容器的跨主机连接
+*** 使用网桥实现跨主机容器连接
+在同一个docker主机中，docker容器通过默认的docker0网桥进行网络连接。如果将连接容器的网桥桥接到docker主机提供的网卡上，并且将网桥分配的ip地址与Docker主句的ip地址设置为同一IP段，相当于将Docker宿主机中的容器，与docker主机的网络连接在一起。
+环境准备：
+两台电脑
+网桥管理工具,apt-get install bridge-utils
+IP地址，host1->10.211.55.3,host2->10.211.55.5
+网络配置：修改/etc/network/interfaces
+auto br0(网桥名称)
+iface br0 inet static(IP分配方式)
+address 10.211.55.3
+network 255.255.255.0 
+gateway 10.211.55.1
+dridge_port eth0(将本地的物理网卡连接到新建的网桥之上)
+设置docker端：/etc/default/docker文件
+-b 指定使用自定义网桥
+-b=br0
+--fixed-cidr限制ip地址分配范围(物理机，虚拟机，容器都将h使用同样的网段。物理机所在的网络制约虚拟机和容器的网络分配)
+Host1:10.211.55.64/26 容器地址范围：10.211.55.65～10.211.55.126 
+Host2:192.168.59.128/26 地址范围：10.211.55.129~10.211.55.190
+
+*** 使用Opne vSwitch实现跨主机容器连接
+open vswitch是什么？
+Open vSwitch是一个高质量的、多层虚拟交换机，使用开源Apache2.0许可协议，由Nicira Networks开发，主要实现代码为可移植的C代码。它的目的是让大规模网络自动化可以通过编程扩展，同时仍然支持标准的管理接口和协议(例如NetFlow，sFlow，SPAN，RSPAN，CLI，LSCP，802.1ag)
+GRE隧道：通用路由协议封装。隧道技术(Tunneling)是一种通过使用互联网络的基础设施在网络之间传递数据的方式。使用隧道传递数据(或负载)可以是不同协议的数据帧或包。隧道协议将其它协议的数据帧或包重新封装然后通过隧道发送。新的帧头提供路由信息，以便通过互联网传递被封装的负载数据。(点对点再封装，实现部署在不同主机并且拥有不同网段的IP地址容器间的通信)
+环境准备：
+两台电脑
+双网卡，HOST-Only(虚拟机之间的连接)&NAT(外部网络连接)
+安装(Open vSwitch)：apt install openvswitch-switch
+安装网桥管理工具：apt install bridge-utils
+IPaddress:
+host1:192.168.59.103
+host2:192.168.59.104
+
+操作：
+1.建立ovs网桥
+查看ovs状态：sudo ovs-vsctl show
+创建ovs网桥(与linux网桥管理工具相似)：sudo ovs-vsctl add-br obr0
+
+2.添加gre连接
+sudo ovs-vsctl add-port obr0 gre0
+设置接口：sudo ovs-vsctl set interface gre0 type=gre options:options:remote_ip=另一台主机的IP
+查看ovs状态：sudo ovs-vsctl show
+
+3.配置本机docker容器虚拟网桥
+新建网桥：sudo brctl addbr br0
+设置br0的网络地址：sudo ifconfig br0 192.168.1.1 netmask 255.255.255.0 
+为br0添加ovs网路连接：sudo brctl addif br0 obr0 
+查看当前网桥的连接状态：sudo brctl show
+设置用新建的网桥代替docker0：vim /etc/default/docker
+重启docker：sudo service docker restart
+建立docker容器：docker run -it ubuntu /bin/bash
+
+4.添加不同的Docker容器网段路由
+宿主机A：(ip空)(容器ip：192.168.1.1)
+宿主机B：ip192.168.59.104，容器ip：192.168.2.1
+仅设置A到B的隧道无法连接到B中的容器网段，需要添加路由表。
+查看路由表：route
+添加路由信息：sudo ip route add 192.168.2.0/24 via 192.168.59.104 dev eth0
+
+*** 使用weave实现跨主机容器连接
+weave是什么？语义：编织。建立一个虚拟的网络，用于将运行在不同主机的Docker容器连接起来。http://weave.works   https://github.com/weaveworks/weave#readme
+环境准备：
+两台电脑
+双网卡，Host-Only&NAT
+ip地址：
+Host1:192.168.59.103
+Host2:192.168.59.104
+
+操作：
+1.安装weave
+sudo wget -o /usr/bin/weave https://raw.githubbusercontent.com/zettio/weave/master/weave 
+sudo chmod a+x /usr/bin/weave
+
+2.启动weave：weave launch(其实是在docker中运行一个weave容器)
+查看：docker ps -l 
+
+host2启动
+weave launch 192.168.59.103,使两个docker能够正确的连接在一起
+创建容器：c2=$(weave run 192.168.1.2/24 -it ubuntu /bin/bash)weave创建容器类似docker run。但是需要填入ip地址(在启动容器时分配的IP地址，该地址由weave维护)
+c2(是使用weave运行的容器)
+docker attach $c2
+
+host1 启动 
+weave launch
+weave run 192.168.1.10/24 -it --name wc1 ubuntu /bin/bash(容器的ip是根据启动容器所分配，但是会多一个weave的ip)
+docker attach wc1
+* Docker
+** Docker简介
+*** 什么是容器
+一种虚拟化的方案
+操作系统级别的虚拟化.将应用与运行环境打包。容器的生存周期与在程序中运行的程序相一致
+只能运行相同或相似内核的操作系统
+[[./figure_Docke/visual_docker.jpg]]
+**** 依赖于Linux内核特性：Namespace和Cgroups（Control Group）
+***** Namespace 命名空间
+应用程序之间的隔离
+- PID(Process ID)
+- NET(Network)管理网络接口
+- IPC(InterProcess Communication)管理跨进程通信的访问
+- MNT(Mount)管理挂载点
+- UTS(Unix Timesharing System)隔离内核和版本标识
+***** Control Group（Cgroups）
+用来分配资源。
+资源限制：设置内存使用的限额
+优先级设定
+资源计量
+资源控制
+
+*** Docker的目标
+- 提供简单轻量的建模方式
+- 职责的逻辑分离
+- 开发人员只需要注意容器中运行的应用程序
+- 运维人员只需要关心如何管理容器
+- 加强开发人员的开发环境与应用要布置生产环境的一致性
+- 缩短代码从开发、部署、测试的生命周期
+- 鼓励使用面向服务的架构
+*** Docker的使用场景
+1.使用Docker容器开发、测试、部署服务。
+2.创建隔离的运行环境
+3.在本地搭建测试环境
+4.构建多用户的平台即服务（PaaS）基础设施
+5.提供软件即服务（SaaS）应用程序
+6.高性能、超大规模的宿主机部署
+** Docker的基本组成
+*** Docker Client 客户端
+C/S架构：客户端向守护进程发出请求，然后守护进程完成所有工作并返回结果。两者既可以在本地也可以远程访问。
+[[./figure_Docke/C_S.jpg]]
+*** Docker Daemon 守护进程
+服务端
+*** Docker Image 镜像（构建和打包）
+容器的基石：保存了启动容器的各种条件。
+层叠的只读文件系统：最低端引导文件系统，然后是root文件系统可以是一种或多种 操作系统
+联合加载（union mount）一次加载多个文件系统，外部仅能看到一个文件系统。
+[[./figure_Docke/image.jpg]]
+*** Docker Container 容器（启动和执行）
+通过镜像执行，是Docker的执行单元，可以运行用户的一个或多个进程。
+写时复制：如果修改一个文件，首先从只读层复制到可写层，只读层文件依然存在，但是被复制的副本所替代。
+读写层+镜像层+配置数据
+[[./figure_Docke/container.jpg]]
+**** 容器的能力
+文件系统隔离：每个容器都有自己的root文件系统
+进程隔离：每个容器都运行在自己的进程环境中
+网络隔离：容器的虚拟网络接口和IP地址都是分开的
+资源隔离和分组：使用cgroups将CPU和内存之类的资源独立分配给每个Docker容器
+*** Docker Registry 仓库
+保存用户构建的镜像
+公用仓库：Docker Hub
+[[./figure_Docke/base_content.jpg]]
+** Docker安装
+uname -a
+ls -l /sys/class/misc/device-mapper
+*** ubuntu安装
+**** 方法一（官方软件库安装）：
+安装：1.sudo apt install docker.io
+运行：2.source /etc/bash_completion.d/docker.io
+查看版本：sudo docker.io version
+
+添加用户组：
+sudo groupadd docker
+sudo gpasswd -a ${USER} docker
+sudo service docker restart
+重启
+
+测试：
+docker run ubuntu echo 'Hello word'(ubuntu是用来指定容器运行的系统)
+**** 方法二（Docker维护的版本安装）：
+1.检查APT的HTTPS支持查看/usr/lib/apt/methods/https文件是否存在
+若不存在：
+apt update
+apt install -y apt-transport-https 
+2.安装 
+curl -sSL https://get.docker.com |sudo sh
+
+* owncloud
+sudo groupadd docker
+sudo gpasswd -a ${USER} docker
+sudo service docker restart
+newgrp - docker
+
+sudo docker pull owncloud(拉取镜像)
+docker ps(查看当前正在运行的容器)
+docker ps -a(查看所有的容器)
+docker rm <container id>(删除容器)
+docker images(查看镜像)
+docker rmi <image id>(删除镜像)
+docker start <container name>(重新进入某容器)
+docker attach <container name>(进入交互式运行的终端,退出交互式运行的容器c-p c-q)
+sudo docker run -d -p 80:80 owncloud(运行容器)
+docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=密码 -d mysql:5.7
+docker run --name owncloud --link some-mysql:mysql -d application-that-uses-mysql
+
+
+
+
+
+

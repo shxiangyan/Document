@@ -1,0 +1,10 @@
+apt install axel
+开启BBR
+echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
+echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
+sysctl -p
+sysctl net.ipv4.tcp_available_congestion_control
+返回:net.ipv4.tcp_available_congestion_control = bbr cubic reno
+检查是否开启成功:lsmod | grep bbr
+
+axel -an 150

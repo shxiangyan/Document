@@ -1,0 +1,111 @@
+\documentclass{article}
+\usepackage{ctex}
+\usepackage{amsmath}
+\begin{document}
+	\section{简介}
+	\LaTeXe{}将排版内容分为文本模式和数学模式。文本模式用于普通文本排版，数学模式用于数学公式排版
+	
+	
+	\section{行内公式}
+	
+	\subsection{美元符号}
+	交换律是$a+b=b+a$,如$1+2=2+1=3$。
+	
+	\subsection{小括号}
+	交换律是\(a+b=b+a\),如\(1+2=2+1=3\)。
+	
+	\subsection{math环境}
+	交换律是\begin{math}
+		a+b=b+a
+	\end{math}
+	如\begin{math}
+		1+2=2+1=3
+	\end{math}。
+	
+	
+	\section{上下标}
+	\subsection{上标}
+	$3x^2-x+2=0$
+	
+	$3x^{20}+2=0$%当指数是多位数时要用大括号进行分组
+	
+	\subsection{下标}
+	$a_0,a_{100}$
+	
+	\section{希腊字母}
+	$\alpha$
+	$\beta$
+	$\gamma$
+	$\epsilon$
+	$\omega$
+	
+	$\Gamma$
+	$\Delta$
+	$\Theta$
+	$\Pi$
+	$\Omega$
+	
+	$\alpha^3+\beta^2+\gamma=0$
+	
+	\section{数学函数}
+	$\log$
+	$\sin$
+	$\cos$
+	$\arcsin$
+	$\arccos$
+	$\ln$
+	
+	$\sin^2 x+\cosh^2 y=1$
+	
+	$y=\arccos x$
+	
+	$y=\sin^{-1} x$
+	
+	$y=\ln x$
+	
+	$\sqrt{2}$
+	
+	$\sqrt{x^2+y^2}$
+	
+	$\sqrt{2+\sqrt{20}}$
+	
+	$\sqrt[4]{x}$
+	
+	\section{分式}
+	大约是原体积的$3/4$。
+	大约是原体积的$\frac{3}{4}$
+	
+	$\frac{1}{1+\frac{1}{x}}$
+	
+	\section{行间公式}
+	\subsection{美元符号}
+	%方式一：使公式占一行并居中，应用两个美元。
+	交换律：$$a+b=b+a$$
+
+	\subsection{中括号}
+	%方式二：
+	交换律是\[a+b=b+a\]
+	
+	\subsection{displaymath环境}
+	%方式三：
+	交换律：
+	\begin{displaymath}
+	a+b=b+a
+	\end{displaymath}
+	
+	\subsection{自动编号公式环境}
+	交换律是：
+	\begin{equation}
+		a+b=b+a
+	\end{equation}
+	%交叉引用
+	结合律如式\ref{key}所示：
+	\begin{equation}
+	a+b=b+a\label{key}
+	\end{equation}
+	
+	\subsection{不编号equation*公式环境}
+	\begin{equation*}
+		a+b=b+a
+	\end{equation*}
+\end{document}

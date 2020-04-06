@@ -1,0 +1,33 @@
+* 二难推理
+** 构造性二难(特殊形式)
+证明：(A \rightarrow B) \land (\neg A \rightarrow B) \Rightarrow B:\\
+等值演算法：\\
+  [(A \rightarrow B) \vee (\neg A \rightarrow B)] \rightarrow B \\
+\Leftrightarrow \neg [(A \vee B) \land (A \vee B)] \vee B \\
+\Leftrightarrow (A \land \neg B) \vee (\neg A \land \neg B) \vee B \\
+\Leftrightarrow [(A \land \neg B) \vee B](\neg A \land \neg B) \\
+\Leftrightarrow (A \vee B \land B \vee \neg B)(\neg A \land \neg B) \\
+\Leftrightarrow (A \vee B) \vee \neg (A \vee B) \\
+\Leftrightarrow 1 \\
+** 构造性二难
+证明：(A \rightarrow B) \land (C \rightarrow D) \land (A \vee C) \Rightarrow (B \vee D): \\
+等值演算法：\\
+  \neg [(\neg A \vee B) \land (\neg C \vee D) \land (A \vee C)] \vee (B \vee D) \\
+\Leftrightarrow [(A \land \neg B) \vee (C \land \neg D) \vee (\neg A \land \neg C)] \vee (B \vee D) \\
+\Leftrightarrow [(A \land \neg B) \vee B] \vee [(C \land \neg D) \vee D] \vee (\neg A \land \neg C) \\
+\Leftrightarrow (A \vee B) \vee (C \vee D) \vee (\neg A \land \neg C) \\
+\Leftrightarrow [(\neg A \land \neg C) \vee A] \vee B \vee C \vee D \\
+\Leftrightarrow (\neg C \vee A) \vee B \vee C \vee D \\
+\Leftrightarrow (\neg C \vee C) \vee A \vee B \vee D \\
+\Leftrightarrow 1 \\
+** 人工智能书上的二难
+证明：P \vee Q,P \rightarrow R ,Q \rightarrow R \Rightarrow R : \\
+等值演算法：\\
+  (P \vee Q) \land (P \rightarrow R) \land (Q \rightarrow R) \rightarrow R \\
+\Leftrightarrow \neg[(P \vee Q) \land (\neg P \vee R) \land (\neg Q \vee R)] \vee R \\
+\Leftrightarrow (\neg P \land \neg Q) \vee (P \land \neg R) \vee (Q \land \neg R) \vee R \\
+\Leftrightarrow (\neg P \land \neg Q) \vee (P \land \neg R) \vee [(Q \land \neg R) \vee R] \\
+\Leftrightarrow (\neg P \land \neg Q) \vee (P \land \neg R) \vee (Q \vee R) \\
+\Leftrightarrow [(\neg P \land \neg Q) \vee Q] \vee [(P \land \neg R) \vee R] \\
+\Leftrightarrow (\neg P \vee P) \vee Q \vee R \\
+\Leftrightarrow 1 \\

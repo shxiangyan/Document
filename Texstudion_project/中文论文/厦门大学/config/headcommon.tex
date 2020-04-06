@@ -1,0 +1,76 @@
+% !Mode:: "TeX:UTF-8"
+%% common definitions both for main and cover
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 重定义字号命令
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\xiaochu}{\fontsize{30pt}{40pt}\selectfont}    % 小初, 1.5倍行距
+\newcommand{\yihao}{\fontsize{26pt}{36pt}\selectfont}    % 一号, 1.4倍行距
+\newcommand{\erhao}{\fontsize{22pt}{28pt}\selectfont}    % 二号, 1.25倍行距
+\newcommand{\xiaoer}{\fontsize{18pt}{18pt}\selectfont}    % 小二, 单倍行距
+\newcommand{\sanhao}{\fontsize{16pt}{24pt}\selectfont}    % 三号, 1.5倍行距
+\newcommand{\xiaosan}{\fontsize{15pt}{22pt}\selectfont}    % 小三, 1.5倍行距
+\newcommand{\sihao}{\fontsize{14pt}{21pt}\selectfont}    % 四号, 1.5倍行距
+\newcommand{\banxiaosi}{\fontsize{13pt}{19.5pt}\selectfont}    % 半小四, 1.5倍行距
+\newcommand{\xiaosi}{\fontsize{12pt}{18pt}\selectfont}    % 小四, 1.5倍行距
+\newcommand{\dawuhao}{\fontsize{11pt}{11pt}\selectfont}    % 大五号, 单倍行距
+\newcommand{\wuhao}{\fontsize{10.5pt}{10.5pt}\selectfont}    % 五号, 单倍行距
+\newcommand{\xiaowu}{\fontsize{9pt}{9pt}\selectfont}    % 小五号, 单倍行距
+
+\makeatletter
+%% fill parbox to given width
+\newlength{\@fillparboxlen}
+\newcommand\fillparbox[2]{%
+  \settowidth{\@fillparboxlen}{#2}
+  \parbox[t]{\ifdim#1>\@fillparboxlen#1\else\@fillparboxlen\fi}{\hbadness 10000%
+    \noindent\parfillskip 0pt #2}}
+\newcommand\classification[1]{\def\XMUT@value@classification{#1}}
+\newboolean{XMUT@boolean@confidential}
+\newcommand\confidential[2]{\def\XMUT@value@confidential{#1}%
+  \ifthenelse{\boolean{#2}}
+    {\setboolean{XMUT@boolean@confidential}{true}}
+    {\setboolean{XMUT@boolean@confidential}{false}}}
+\newcommand\confidentialdate[3]{%
+  \def\XMUT@value@confidentialdate@year{#1}%
+  \def\XMUT@value@confidentialdate@month{#2}%
+  \def\XMUT@value@confidentialdate@day{#3}}
+\newcommand\UDC[1]{\def\XMUT@value@UDC{#1}}
+\newcommand\serialnumber[1]{\def\XMUT@value@serialnumber{#1}}
+\newcommand\studentsn[1]{\def\XMUT@value@studentsn{#1}}
+\newcommand\school[1]{\def\XMUT@value@school{#1}}
+\newcommand\degree[1]{%
+  \def\XMUT@value@degree{#1}%
+  \hypersetup{pdfsubject={厦门大学#1学位论文}}}
+\renewcommand\title[2]{%
+  \def\XMUT@value@title{#1}
+  \def\XMUT@value@englishtitle{#2}
+  \hypersetup{pdftitle={#1}}}
+\renewcommand\author[1]{\def\XMUT@value@author{#1}
+	\hypersetup{pdfauthor={#1}}}
+\newcommand\advisor[2]{\def\XMUT@value@advisor{#1}%
+    \def\XMUT@value@advisortitle{#2}}
+\newcommand\major[1]{\def\XMUT@value@major{#1}}
+\newcommand\submitdate[2]{%
+  \def\XMUT@value@submitdate@year{#1}%
+  \def\XMUT@value@submitdate@month{#2}}
+  %\def\XMUT@value@submitdate@day{#3}}
+\newcommand\defenddate[2]{%
+  \def\XMUT@value@defenddate@year{#1}%
+  \def\XMUT@value@defenddate@month{#2}}
+  %\def\XMUT@value@defenddate@day{#3}}
+\newcommand\grantdate[2]{%
+  \def\XMUT@value@grantdate@year{#1}%
+  \def\XMUT@value@grantdate@month{#2}}
+  %\def\XMUT@value@grantdate@day{#3}}
+\newcommand\chairman[1]{\def\XMUT@value@chairman{#1}}
+\newcommand\appraiser[1]{\def\XMUT@value@appraiser{#1}}
+\newcommand\team[1]{\def\XMUT@value@team{#1}}
+\newcommand\fundteam[1]{\def\XMUT@value@fundteam{#1}}
+\newcommand\lab[1]{\def\XMUT@value@lab{#1}}
+%% add pdfkeywords, because this step must be done before \maketitle,
+%% so we could not use the \keywords command in abstract.
+\newcommand\pdfkeywords[1]{%
+  \hypersetup{pdfkeywords={#1}}}
+%
+\makeatother

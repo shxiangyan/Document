@@ -1,0 +1,10 @@
+* 基础应用
+查看使用tensorflow还是theano搭建的神经网络
+import keras
+
+更改backend：~/.keras/keras.json
+
+import os
+os.environ['KERAS_BACKEND']='theano'
+import keras
+此时用到的backend是theano

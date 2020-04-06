@@ -1,0 +1,50 @@
+* 常用参数
+|------------------------+----------------------------------------|
+| 命令                   | 含义                                   |
+|------------------------+----------------------------------------|
+| screen -S screenname   | 创建一个叫screenname的session          |
+| screen -ls             | 列出当前所有的session                  |
+| screen -r screenname   | 回到screenname session                 |
+| screen -x              | 同一用户，共享屏幕                     |
+| screen -d yourname     | 远程detach yourname session            |
+| screen -d -r  yourname | 结束当前session并回到 yourname session |
+|------------------------+----------------------------------------|
+* 快捷键(所有命令都是以(C-a)开始)
+| 快捷键     | 内容                                                                     |
+|------------+--------------------------------------------------------------------------|
+| C-a ?      | 显示所有键绑定信息                                                       |
+| C-a c      | 创建一个新的运行shell的窗口并切换到该窗口                                |
+| c-a w      | 显示所有窗口列表                                                         |
+| C-a n      | next，切换到下一个window                                                 |
+| C-a p      | Previous，切换到上一个window                                             |
+| C-a 0...9  | 在0...9之间切换                                                          |
+| c-a c-a    | 最近用的window之间切换                                                   |
+| c-a k      | kill，关闭当前window                                                     |
+| c-a t      | 显示系统时间                                                             |
+| c-a z      | 把当前session放到后台执行，用shell的fg命令则可回去                       |
+|------------+--------------------------------------------------------------------------|
+| c-a d      | detach， #暂时离开当前session，将目前的screen                            |
+|            | session(可能含有多个windows)丢到后台执行，并会回到还没进screen时的状态， |
+|            | 此时在screen里，每个window内运行的process(无论是前台、后台)              |
+|            | 都在继续执行，即使logout也不影响                                         |
+
+
+|------------+------------------------------------------------------------|
+| c-a [      | 进入 copymode,在copymode下可以回滚、搜索、复制就像用vi一样 |
+|            | c-b backward package                                       |
+|            | c-f forward package                                        |
+|            | w forward one word ，以字为单位向前移                      |
+|            | b backward one word，以字为单位往后移                      |
+|            | H 将光标移至左上角                                         |
+|            | L 将光标移至左下角                                         |
+|            | 0 移至行尾                                                 |
+|            | $ 移至行尾                                                 |
+|            | space 第一次按为标记区起点，第二次为终点                   |
+|            | ESC 结束 copy mode                                         |
+| c-a ]      | 结束 copy mode                                             |
+| c-a S      | 水平分割                                                   |
+| c-a "竖线" | 垂直分割                                                   |
+| c-a X      | 关闭当前区块，并不关闭当前窗口                             |
+| c-a tab    | 切换                                                       |
+| C-a c      | 创建终端                                                   |
++-..-+

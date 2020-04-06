@@ -1,0 +1,81 @@
+% !Mode:: "TeX:UTF-8"
+\documentclass{article}
+\input{en_preamble.tex}
+\input{xecjk_preamble.tex}
+\begin{document}
+\title{四边形网格生成}
+\author{闫世祥}
+\date{\chntoday}
+\maketitle
+\section{提取网格的边}
+
+\begin{listing}[H]
+    \begin{pythoncode}
+        edge = np.hstack((elements,elements[:, 1:], np.array([elements[:,0]]).T))
+        np.reshape(edge,[elements.shape[0]*elements.shape[1], 2], order = "F")
+    \end{pythoncode}
+\end{listing}
+
+其原理就是把 $element$ 按列拉长, 再把
+$elements[:, 1:], np.array([elements[:,0]]).T$ 按列拉长, 然后进行水平拼接, 就
+得到的数组每一行都是一个边.
+
+\section{对每组边进行编号}
+\begin{listing}[H]
+    \begin{pythoncode}
+        edge2node,ie=np.unique(np.sort(edge), return_inverse=True,axis = 0)
+    \end{pythoncode}
+\end{listing}
+其中, edge2node 包含所有的边(不重复), ie 是 edge 在 edge2node 中的编号
+\section{每个单元每个边在 edge2node 下的编号}
+\begin{listing}[H]
+    \begin{pythoncode}
+        element4edge = np.reshape(ie,[int(len(ie)/4),4], order = "F")
+    \end{pythoncode}
+\end{listing}
+\section{标记需要加密的边}
+假设我们已经知道了要加密的单元编号为 marked.
+\begin{listing}[H]
+    \begin{pythoncode}
+        edge4newnode = np.zeros([1,len(edge2node)])
+        edge4newnode(element4edge(marked,:)) = 1
+    \end{pythoncode}
+\end{listing}
+现在, edge4newnode 中的元素就是需要加密的边在 edge2node 中的编号.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\cite{knupp2012introducing}
+\bibliographystyle{abbrv}
+\bibliography{ref}
+\end{document}

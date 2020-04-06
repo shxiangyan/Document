@@ -1,0 +1,41 @@
+连接:ssh -oPort=6000 yan@ip(ip为服务端ip,端口为客户端设置的远程端口)
+访问内网渗透的主机上的网页:http://shixiangyan.tk:8080/文件名
+* 建立ssh连接
+** 服务端
+emacs frpc.ini
+
+[common]
+bind_port=7000
+vhost_http_port=8080
+token=809777421
+
+启动:./frpc -c ./frpc.ini
+** 客户端
+frpc.ini
+
+[common]
+server_addr=49.233.64.251
+server_port=7000
+toker=809777421
+[ssh]
+type=tcp
+local_ip=127.0.0.1
+local_port=22
+remote_port=6000
+[web]
+type=http
+local_port=80
+custom_domains=shxiangyan.tk
+
+
+
+启动:./frps -c ./frps.ini
+
+nohup ./frps -c ./frps.ini &
+
+结束后台运行
+ps -aux|grep frp| grep -v grep
+[1]12345
+kill -9 12345
+
+

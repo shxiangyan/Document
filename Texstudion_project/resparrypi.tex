@@ -1,0 +1,38 @@
+\documentclass{article}
+\usepackage{ctex}
+
+\title{树莓派笔记}
+\author{Shixiang Yan}
+\date{\today}
+
+\begin{document}
+	\maketitle
+	\tableofcontents
+	\section{软路由}
+	\subsection{刷路由系统}
+	材料：
+	OpenWRT-for-RaspberryPi4-by-Tony.img
+	USBWriter.exe
+	\subsection{设置树莓派网关}
+	接口$->$上级路由器的ip作为网关，自设树莓派ip，子网掩码以及DNS$->$确定。
+	\subsection{添加订阅}
+	芝麻开门$->$shadowsocks$->$添加订阅$->$更新$->$启动订阅
+	\subsection{通过无线热点连接}
+	更改为静态ip$->$网关为树莓派ip
+	
+	ubutu18.04更改ip：首先，vi /etc/network/interfaces；然后，添加:
+	
+		auto eth0
+		iface eth0 inet static
+		address 192.168.8.100    
+		netmask 255.255.255.0
+		gateway 192.168.8.2
+
+		最后：sudo /etc/init.d/networking restart
+	
+	设置DNS:/etc/systemd/resolved.conf,[Resolve],DNS=119.29.29.29,systemctl restart systemd-resolved.service
+	
+	\subsection{备注}
+	上级路由ip192.168.1.1，腾达路由ip192.168.1.1，树莓派路由ip192.168.1.2
+	\section{机器人}
+\end{document}

@@ -1,0 +1,63 @@
+This is BibTeX, Version 0.99d (TeX Live 2017/Debian)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: main.aux
+The style file: ama.bst
+Database file #1: references.bib
+ptr=1, stack=
+
+---the literal stack isn't empty for entry smith99
+while executing---line 981 of file ama.bst
+ptr=1, stack=
+
+---the literal stack isn't empty for entry south01
+while executing---line 981 of file ama.bst
+ptr=1, stack=
+
+---the literal stack isn't empty for entry lock03
+while executing---line 981 of file ama.bst
+ptr=1, stack=
+
+---the literal stack isn't empty for entry IFMBE
+while executing---line 981 of file ama.bst
+You've used 4 entries,
+            1835 wiz_defined-function locations,
+            502 strings with 3914 characters,
+and the built_in function-call counts, 524 in all, are:
+= -- 52
+> -- 4
+< -- 0
++ -- 4
+- -- 0
+* -- 40
+:= -- 71
+add.period$ -- 5
+call.type$ -- 4
+change.case$ -- 0
+chr.to.int$ -- 0
+cite$ -- 4
+duplicate$ -- 33
+empty$ -- 73
+format.name$ -- 0
+if$ -- 134
+int.to.chr$ -- 0
+int.to.str$ -- 4
+missing$ -- 4
+newline$ -- 16
+num.names$ -- 0
+pop$ -- 16
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 11
+stack$ -- 0
+substring$ -- 0
+swap$ -- 3
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 0
+while$ -- 0
+width$ -- 5
+write$ -- 40
+(There were 4 error messages)

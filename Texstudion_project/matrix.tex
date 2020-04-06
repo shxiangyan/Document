@@ -1,0 +1,130 @@
+\documentclass{ctexart}	%ctexbook,ctexrep
+%导言区
+\usepackage{ctex}
+\usepackage{amsmath}
+%使用newcommand制定命令，第一个参数命令的名字，第二个参数命令的内容。
+\newcommand{\adots}{\mathinner{\mkern2mu%
+		\raisebox{0.1em}{.}\mkern2mu\raisebox{0.4em}{.}%
+		\mkern2mu\raisebox{0.7em{.}\mkern1mu}}}
+
+%正文区
+\begin{document}
+	%矩阵环境中，用&分隔列，用\\分隔行
+	\[
+	\begin{matrix}
+		0&1 \\
+		1&1
+	\end{matrix}
+	%pmatrix(小括号)
+	\begin{pmatrix}
+		0&1\\
+		1&0
+	\end{pmatrix}
+	%bmatrix(中括号)
+	\begin{bmatrix}
+		1&2\\
+		4&3
+	\end{bmatrix}
+	%Bmatrix（大括号）
+	\begin{Bmatrix}
+		1&4\\
+		2&8
+	\end{Bmatrix}
+	%vmatrix（单竖线）
+	\begin{vmatrix}
+		2&4\\
+		6&8
+	\end{vmatrix}
+	%Vmatrix（双竖线）
+	\begin{Vmatrix}
+		5&10\\
+		20&10
+	\end{Vmatrix}
+	\]
+	
+	%矩阵与另外的方法联立
+	\[
+	A=\begin{pmatrix}
+		a_{11}^2&a_{12}^2&a_{452}^{567}\\
+		0&a_{22}&a_{23}\\
+		0&0&a_{33}
+	\end{pmatrix}
+	\]
+	%常用省略号：\dots(横)、\vdots（竖）、\ddots（斜）
+	\[
+	A=\begin{bmatrix}
+	a_{11}&\dots&a_{1n}\\
+	&\ddots&\vdots\\
+	0&&a_{nn}
+	\end{bmatrix}_{n \times n}
+	\]
+	
+	%分块矩阵（矩阵嵌套）
+	\[
+	\begin{pmatrix}
+		\begin{pmatrix}
+			1&0\\0&1
+		\end{pmatrix} &
+		\begin{pmatrix}
+			5&6\\7&8
+		\end{pmatrix}  \\
+		\begin{pmatrix}
+			7&8\\9&10
+		\end{pmatrix} &
+		\begin{pmatrix}
+			11&12\\13&14
+		\end{pmatrix}
+	\end{pmatrix}_{n \times n}
+	\]
+	\[
+	\begin{pmatrix}
+		\begin{pmatrix}
+		1&0\\0&1
+		\end{pmatrix} &
+		\text{\Large 0} \\	%\text可以独占一个分块矩阵单元
+		\text{\Large 0} &
+		\begin{pmatrix}
+		11&12\\13&14
+		\end{pmatrix}
+	\end{pmatrix}_{n \times n}
+	\]
+	%三角矩阵
+	\[
+	\begin{pmatrix}
+	a_{11}&a_{12}&\cdots&a_{1n}\\
+	&a_{22}&\cdots&a_{2n}\\
+	&	&\ddots&\vdots\\
+	\multicolumn{2}{c}{\raisebox{1.3ex}[0pt]{\Huge 0}}%用multicolumn表示三角部分
+	&                    &a_{nn}
+	\end{pmatrix}
+	\]
+	%跨列的省略好：\hdotsfor{列数}
+	\[
+		\begin{pmatrix}
+			1&\frac{1}{2}&\dots&\frac{1}{n}\\
+			\hdotsfor{4}\\%用关键字：hdotsfor
+			m&\frac{m}{2}&\dots&\frac{m}{n}
+		\end{pmatrix}
+	\]
+	%行内小矩阵（smallmatrix）环境
+	复数$z=(x,y)$也可用矩阵
+	\begin{math}
+		\left(%需要手动加上左括号
+		\begin{smallmatrix}
+		x&-y\\y&x
+		\end{smallmatrix}
+		\right)%需要手动加上右括号
+	\end{math}
+	%array环境(类似与表格环境tabular)
+	\[
+	\begin{array}{r|r}%rlc和竖线制定位置格式
+	\frac{1}{2} & 0\\
+	\hline%产生横线
+	0&-\frac{a}{bc}\\
+	\end{array}
+	\]
+	
+	
+	
+	
+\end{document}

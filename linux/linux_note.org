@@ -1,0 +1,195 @@
+* Windows远程ssh连接ubuntu
+apt install openssh-server
+* 递归修改权限
+sudo chmod -R 755
+* 拷贝文件
+cp -r dir1 dir2
+* gpu监控
+watch -n 0.1 nvidia-smi
+* 添加删除用户
+sudo useradd -d /home/yan ch123 -m
+sudo usermod -s /bin/bash ch123
+sudo passwd ch123
+userdel -r ch123
+/etc/sudoers（"xxx ALL=(ALL) ALL"(这里的xxx是要改的用户名)）
+* 创建快捷方式
+sudo ln -s /media/yan/Data/learn/ /home/yan/Desktop/learn
+* 查看磁盘使用情况
+df -h
+du -sh *
+* 关闭进程
+ps -ef | grep progress_name
+kill -l pid
+killall progress_name
+kill -u yan
+* 解压与压缩
+tar -zcvf database_work.tar.gz database_work
+tar zxvf FileName.tar.gz
+tar zcvf FileName.tar.tgz FileName
+tar zxvf FileName.tar.tgz
+tar -cvf filename
+tar -xvf filename.tar
+gzip FileName
+gunzip FileName.gz
+xz -z filename
+xz -d filename.xz
+bzip2 -z FileName
+bunzip2 FileName.bz2
+tar jcvf FileName.tar.bz2 DirName
+tar jxvf FileName.tar.bz2
+compress FileName
+uncompress FileName.Z
+zip FileName.zip DirName
+unzip FileName.zip
+rar e FileName.rar
+rar x FileName.rar
+* kali
+** 自动登录
+vim /etc/lightdm/lightdm.conf
+autologin-user=root
+autologin-user-timeout=0
+
+vim /etc/pam.d/lightdm-autologin
+#auth required pam_succeed_if.so user != root quiet_success
+** 更换源
+vim /etc/apt/sources.list
+#aliyun
+deb http://mirrors.aliyun.com/kali kali-rolling main non-free contrib
+deb-src http://mirrors.aliyun.com/kali kali-rolling main non-free contrib
+ 
+#清华
+deb http://mirrors.tuna.tsinghua.edu.cn/kali kali-rolling main contrib non-free
+deb-src https://mirrors.tuna.tsinghua.edu.cn/kali kali-rolling main contrib non-free
+apt-get update
+apt-get upgrade
+
+** 安装完整版
+apt-get install kali-linux-full
+** 安装字体
+apt-get install ttf-wqy-zenhei
+** vim /usr/lib/systemd/system/create_ap.service
+修改 ExecStart=/usr/bin/create_ap wlan1 wlan0 WIFI8080
+systemctl daemon-reload
+systemctl enable create_ap.service 
+
+** 连接WIFI
+*** 连接未加密的wifi
+iw dev wlan0 connect SSID 
+
+*** 连接WEP加密的wifi 
+iw dev wlan0 connect SSID key 0:PASSWORD 
+*** 连接WPA/WPA2加密的wifi
+首先停用NetworkManager
+service network-manager stop
+然后生成配置文件
+wpa_passphrase SSID PASSWORD >wpa.conf 
+接着，连接WIFI 
+wpa_supplicant -i wlan0 -B -c wpa.conf (-B 表示后台运行，不会在终端上输出信息，如果想确认密码是否正确，可以先去掉-B，等看到成功的提示后再加上-B)
+最后，分配IP地址
+dhclient wlan0
+
+*** sumba 
+
+** 13.安装samba服务
+sudo apt-get install samba samba-common-bin
+
+14.创建新用户
+useradd sharepi
+
+15.设定密码
+passwd sharepi
+
+16.创建共享文件
+mkdir /home/share/
+
+17.绑定用户与文件夹
+sudo chown -r sharepi /home/share
+
+18.配置/etc/samba/smb.conf文件
+sudo apt-get install vim
+sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.back
+sudo vim /etc/samba/smb.conf
+
+19.在conf文件最下面加入以下代码
+[sharepi]
+path = /home/share
+valid users = sharepi
+browseable = yes
+public = yes
+writable = yes
+
+20.给刚刚创建的共享用户设置一个共享密码
+sudo smbpasswd -a sharepi
+
+21.重启服务
+sudo /etc/init.d/smbd restart
+** vnc 
+开启vnc：vncserver
+关闭：vncserver -kill :1
+修改密码： vncpasswd
+
+sudo apt install xfce4 xfce4-goodies vnc4server 
+
+修改:~/.vnc/xstartup 
+unset SESSION_MANAGER
+unset DBUS_SESSION_BUS_ADDRESS
+
+echo "xfce4-session" > ~/.xsession
+** 时间
+sudo ntpd -s -d
+* ssh欢迎界面
+修改：/etc/motd,ascii画
+
+无用:
+/etc/issue.net 或/etc/issue可以增减一些显示参数
+/etc/banner配置文件可以定制ssh,telent登录界面
+
+有用：
+/etc/update-motd.d
+50-news,广告信息去除/etc/default/motd-news->修改ENABLED=0
+
+显示上次登录信息：
+配置：/etc/ssh/sshd_config(PrintlastLog 设为no)
+
+Debian必须修改：/etc/motd.tail,否则重启：/etc/mode就复原了
+
+debug:run-parts /etc/update-motd.d/
+* sumbda 
+samba服务器搭建：
+sudo apt-get install samba samba-common
+(3)创建一个用于分享的samba目录。
+sudo mkdir /home/share
+(4)给创建的这个目录设置权限
+sudo chmod 777 /home/linuxidc/linuxidc.com/share
+(5)添加用户(下面的linuxidc是我的用户名，之后会需要设置samba的密码)。
+sudo smbpasswd -a linuxidc
+(6)配置samba的配置文件。
+sudo nano /etc/samba/smb.conf
+[share]
+comment = share folder
+browseable = yes
+path = /home/linuxidc/linuxidc.com/share
+create mask = 0777
+directory mask = 0777
+valid users = linuxidc
+force user = linuxidc
+#force group = linuxidc
+public = yes
+available = yes
+writable = yes
+重启smbd
+sudo service smbd restart
+* 磁盘挂载
+打印磁盘信息
+sudo fdisk -l
+
+
+先使用命令查看/dev/sda2的UUID
+sudo blkid /dev/sda2
+
+在 /etc/fstab 中
+UUID=30722A4C722A16DE /home/yan/data/ ntfs defaults 0 2
+
+sudo mount -a
+* 开机启动
+Ubuntu 服务器在启动时会自动执行 /etc/init.d 目录下的脚本，所以我们可以将需要执行的脚本放到 /etc/init.d 目录下

@@ -1,0 +1,15 @@
+\documentclass{ctexart}%ctexbook,ctexrep,详见texdoc graphicx
+\usepackage{ctex}
+
+%导言区：\usepackage(graphicx)
+%语  法：\includegraphics[<选项>]{<文件名>}选项用于缩放比例旋转等
+%格  式:EPS,PDF,PNG,JPFG,BMP
+\usepackage{graphicx}
+\graphicspath{{figure/},{pics/}}%图片在当前目录下的figures目录(多路径)
+
+%正文区(文稿区)
+\begin{document}
+	\LaTeX{}中的插图:  %用空行使提示文字在图片上方
+	
+	\includegraphics[scale=0.7,angle=-45,width=0.7\textwidth]{vgg16.pdf}%scale0~1 height(cm) weight,angle=-45
+\end{document}

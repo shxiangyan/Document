@@ -1,0 +1,24 @@
+\documentclass{ctexart}
+\usepackage{ctex}
+%首先要调option->build->Biber
+%宏包biblatex/biber
+%新的TEX参考文献排版引擎
+%样式文件(参考文献样式文件--bbx文件，引用样式文件--cbx)使用LATEX编写
+%支持根据本地化排版，如：
+%	biber -l zh__pinyin texfile,用于指定按拼音排序
+%	biber -l zh__stroke texfile,用于按笔画排序
+%
+\usepackage[style=numeric,backend=biber,backend=biber]{biblatex}
+\addbibresource{test.bib}
+
+\begin{document}
+	%一次管理多次使用，
+	无格式化引用\cite{biblatex}
+	
+	带方括号的引用\parencite{a1-1}
+	
+	上标引用\supercite{6-1}
+	
+	\nocite{*}%列出未引用的所有参考文献
+	\printbibliography[title={参考文献}]%输出参考文献列表
+\end{document}

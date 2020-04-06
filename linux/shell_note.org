@@ -1,0 +1,920 @@
+* 简介
+#!/bin/bash 是一个约定的标记，它告诉系统这个脚本需要什么解释器来执行。
+
+echo "Hello world"
+* 其他
+单行注释
+#
+
+多行注释
+:<<EOF
+...
+EOF
+
+打印出颜色
+echo -e '\033[32m------------------\033[0m'(固定格式 -e   '\033[32m  \033[0m' )
+
+/bin/bash -n if1.sh (-n用来测试脚本是否有问题，相当于debug)
+
+查看脚本执行的过程： sh -x script.sh |more
+
+每天运行
+crontab -e (任务计划)
+0 0  * *  /bin/bash /DIR/auto_backup_mysql.sh>>/tmp/mysql_bak.log            (0分,0时，日，月，星期.auto_backup_mysql.sh是任务名。日志会打印到mysql_bak.log)
+** 其他命令
+sort命令是将文件的每一行作为一个单位依次比较ASCII，最后升序输出。
+-u在输出行中去除重复行；
+-r输出改为降序，默认升序；
+-o结果输出到文件；
+-n 以数值来排序，sort -r number.txt -o number.txt;
+-f 忽略大小写
+-t 和-k连用 给一行用多个分隔符隔开成多列的数据排序，-t表示使用的分隔符是什么，-k后跟数字表示对那一列数据排序
+
+uniq命令用于检查及删除文本中重复出现的行列，一般与sort结合使用
+-c 在前边输出该行重复出现的次数，并用空格隔开
+
+
+wc命令(word count) 统计字节数，字数 
+-l统计行数 
+-c统计字节数 
+-L打印最长行的长度 
+-w统计字数 
+-m统计字符数
+
+xrags 命令可以将管道或标准输入数据转化为命令行参数
+cat logName |xargs rm -rf
+
+** sed命令
+vim 修改文件  :%s/134/168/g  134换成168
+
+sed的功能就是在文件外部修改，sed -i 's/134/168/g' test.txt(不加-i 表示不修改源文件)
+
+在每行的前面加空格，sed -i 's/^/& /g' test.txt
+
+在每行的前面加id空格，sed -i 's/^/&id /g' test.txt(/^表示一行中的第一个，/g表示全部行，s和/&是固定格式)
+
+在每行的末尾加空格，sed -i 's/$/& /g' test.txt(/$表示末尾)
+
+搜索关键字，在该关键字之后一行添加一个字符串，sed -i '/keyword/a test007' test.txt (/a表示在关键字的后一行)
+
+搜索关键字，在该关键字之前一行添加一个字符串，sed -i '/keyword/i test007' test.txt (/i表示在关键字的前一行)
+
+打印关键字一行，sed -n '/keyword/p' test.txt(-n表示打印 ，/p 还是表示打印)
+
+打印第一行,sed -n '1p' test.txt 
+
+打印1到5行，sed -n '1,5p' test.txt
+
+将空格替换成换行 ：cat number.txt |sed 's/ /\n/g'
+用grep -v 排除空行:cat number.txt|sed 's/ /\n/g' |grep -v "^$"(^$表示以空开头以空结尾)
+soft字符串排序:cat number.txt|sed 's/ /\n/g' |grep -v "^$" |sort
+soft从大到小排序:cat number.txt|sed 's/ /\n/g' |grep -v "^$" |sort -nr
+打印首行和尾行:cat number.txt|sed 's/ /\n/g' |grep -v "^$" |sort -nr|sed -n '1p;$p'
+** awk 命令
+把一行字符串看成以空格为分界的多列列表，awk可以选中一列，索引从1开始
+例如：my name is yanshixiang
+
+打印闫世祥:cat test.txt |awk '{print $4}'
+或者 cat test.txt |awk '{print $NF}'  ($NF表示打印最后一列)
+
+打印/etc/passwd文件下的用户名：/etc/passwd |sed 's/:/ /g'|awk '{print $1}'
+
+格式化分割符,cat /etc/passwd|awk -F: '{print $1}'(以：为分割成多列)
+
+打印ip,ifconfig eth1|grep "Bcast"|awk '{print $2}'|sed 's/addr://g'
+或者，ifconfig eth1|grep "Bcast"|awk '{print $2}'|awk -F:'{print $2}'
+
+打印磁盘利用律并去掉%：df -h|awk '{print $5}|sed 's/%//g'
+
+用双引号添加注解：cat test.txt|awk '{print "01: $NF"}'
+或 cat test.txt |awk '{print $NF}|sed 's/^/&01: /' 
+** find 命令
+find 路径 -name "tast.txt"
+
+for i in `find . -name "*.jpg" -or -name "*.png" |sed 's/^.\///g'`;do echo http://182.92.188.163/cacti/$i;done
+
+默认递归查找，限制深度为1用-maxdepth ，find . -maxdepth 1 -name "test.txt"
+
+tyep指定打印的类型f为文件d为目录，find . -maxdepth 1 -type f -name "*.txt"
+
+-mtime +10 表示10天以前，find . -maxdepth 1 -type f -name "*.txt" -mtime +10
+一天以内，find . -maxdepth 1 -type f -name "*.txt" -mtime -mtime -1 
+
+删除一天内的文件，find .-maxdepth 1 -type f -name "*.txt" -mtime -1 -exec rm -rf {} \;({}相当于把前面的结果引入)
+删除一天内的文件，find .-maxdepth 1 -type f -name "*.txt" -mtime -1 |xargs rm -rf {} \;
+
+拷贝选中5天内的文件到一个目录，find . -maxdepth 1 -type f -name "*.txt" -mtime -5 -exec cp {} /tmp \;
+
+寻找当前文件夹大于20M的文件：find . -size +20M
+** grep 命令
+过滤命令
+
+打印包含323的行,cat number.txt |grep "323"
+
+打印不包含323的行,cat number.txt |grep -v "323"
+
+过滤完了以后替换然后查看，cat number.txt |grep "45"|sed 's/45/98/g'
+
+匹配以10开头的:grep "^10" test.txt
+
+以11结尾:grep "11$" test.txt
+
+匹配含有数字的行，grep "[0-9]" test.txt
+匹配含有一个2位数的行，grep "[0-9][0-9]" test.txt 
+
+匹配含有字母的行,grep "[a-z]" test.txt
+匹配以字母开头的行,grep "^[a-z]" test.txt
+匹配以大写字母开头的行,grep "^[A-Z]" test.txt
+
+匹配以168开头以168结尾的行,grep <^168$> test.txt
+
+匹配ip,cat test.txt |grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}"(需要配合-E打印,{1,3}表示出现1-3次,小括号表示组,-E表示深度匹配)
+
+打印行号，grep -n "10" test.txt
+
+cat打印行号，cat -n "10" test.txt
+
+egrep==grep -E
+匹配两个关键词，egrep "11|keyword"test.txt
+** 特殊符号
+> 覆盖原文件输入新字符串(w)
+
+>> 在末尾追加(a)
+
+* 变量
+** 简单变量
+you="fjekl"
+echo ${you}或echo "$you"
+
+只读变量
+myurl="http:fejiojfE"
+readonly myurl 
+
+删除变量
+unset variable_name
+
+单引号
+str='fjeo'
+单引号里的任何字符串都会原样输出，单引号的字符串中的变量是无效的；
+
+字符串拼接
+echo $str1 $str2
+
+获取字符串长度
+str='abcd'
+echo ${#str}
+
+截断字符串
+echo ${str:1:4}
+
+查找字符串：
+str='runooby'
+echo `expr index "${str}"io`
+查找字符i或o的位置(那个字母先出现，算那个)
+** 数组
+
+array_name=(value0 value1 value2)
+echo ${array_name[index]}
+
+@ or *表示全部索引
+echo ${array_name[@]}
+
+替换
+echo ${A[@]/test2/test5}替换第二个test2数组为test5
+
+删除一个数组删除test3数组命令：unsetA[2];echo ${A[@]}
+
+例1:
+#!/bin/sh 
+eth_bond()
+{
+ NETWORK=(
+    HWADDR=`ifconfig eth0 |egrep "HWaddr|Bcast"|tr "\n" " "|awk '{print $5,$7,$NF}'|sed -e 's/addr://g'-e's/Mask://g'|awk'{print $1}'`
+    IPADDR=`ifconfig eth0 |egrep "HWaddr|Bcast |tr "\n" " "|awk '{print $5,$7,$NF}'|sed -e 's/addr://g'-e's/Mask://g'|awk'{print $2}'`
+    NETMASK=`ifconfig eth0 |egrep "HWaddr|Bcast |tr "\n" " "|awk '{print $5,$7,$NF}'|sed -e 's/addr://g'-e's/Mask://g'|awk'{print $3}'`
+    GETEWAY=`route -n |grep "UG"|awk'{print $2}'`
+  )
+  cat >ifcfg-bond0<<EOF
+  DEVICE=bond0
+  ${NETWORK[1]}
+  ${NETWORK[2]}
+  ${NETWORK[3]}
+  ONBOOT=yes
+  NM_CONTROLLED=no
+  EOF
+}
+
+#!/bin/bash
+soft =(
+  nginx.tar.gz
+  mysql.tar.gz
+  php.tar.gz
+  /etc/sysctl.conf
+)
+echo "This soft total ${#soft[@]}!"
+tar -xzf $soft[0];cd nginx;./confgure;make;make install
+
+** 系统变量
+$0 当前脚本的名称
+$n 当前程序的第n个参数，n=1,2...9
+
+test_parameter1.sh
+#!/bin/bash 
+echo $0
+echo $1 $2
+sh test_parameter1.sh 123 yan (123会给$1 ，yan会给$2,$0会打印当前脚本名称)
+
+
+$? 判断上一条命令是否输入正确
+$* 当前程序的所有参数
+$# 当前程序的参数个数
+
+test_parameter2.sh
+#!/bin/bash
+echo "The \$1 is $1"
+echo "The \$2 is $2"
+echo "The \$? is $?"("\"表示转义)
+echo "The \$* is $*"
+echo "The \$# is $#"
+
+sh test_parameter2.sh abc edf
+output:
+The $1 is abc
+The $2 is edf
+The $? is 0
+The $* is abc edf
+The $# is 2
+
+
+
+
+$UID 当前用户的ID
+$PWD 当前所在的目录
+
+
+# 取得数组元素的个数
+length=${#array_name[@]}
+# 或者
+length=${#array_name[*]}
+# 取得数组单个元素的长度
+lengthn=${#array_name[n]}
+* 条件语句
+ cotinue n  n表示退到第n层继续循环，如果省略n表示跳过本次循环
+ break n n表示跳出循环的层数，如果省略n表示跳出本次循环
+** if
+条件表达式：[-x /etc/init.d/oldboy_functions]&& ./etc/init.d/oldboy_functions||exit
+如果正确运行，如果不正确，退出
+*** 基本格式：
+if (表达式);then
+语句 1 
+else
+语句2
+fi
+
+if1.sh
+#!/bin/bash
+NUM1=100
+NUM2=200
+if ((&NUM1>$NUM2));then
+  echo "This $NUM1 greater $NUM2"
+else
+  echo "error"
+fi
+
+/bin/bash -n if1.sh (-n用来测试脚本是否有问题，相当于debug)
+*** 参数(有参数的条件要用中括号)
+-f 判断文件是否存在 eg: if [-f filename]
+-d 判断目录是否存在 eg: if [-d dir]
+-eg 等于  应用于：整型比较
+-ne 不等于应用：整型比较
+-lt 小于  应用于：整型比较
+-gt 大于 应用于：整型比较
+-le 小于或等于 应用于：整型比较
+-ge 大于或等于 应用于：整型比较
+-a 双方都成立(and) 逻辑表达式 -a 逻辑表达式
+-o 单方成立则成立 
+-z 空字符串
+-x 可执行
+如果目录不存在，创建文件
+if [! -d /home/yan/2090];then(!是非的意思)
+  mkdir -p /home/yan/2090(-p 表示可以继承创建，通常会把文件用变量指向，而不直接使用)
+else
+  echo "This DIR is exist , please exit ..."
+fi 
+
+#如果文件不存在
+FILES=/tmp/test.txt
+if [! -f $FILES];then
+  echo "OK">>$FILES (创建文件并输入OK)
+else
+  cat $FILES (查看文件)
+fi
+*** elif 
+#!/bin/sh
+scores=$1
+if [-z $scores];then    
+  echo "Usage:{$0 60|80.}"
+  exit      (退出，不往下执行，相当于break)
+fi 
+
+if \[\[$scores -gt 85]];then
+  echo "very good"
+elif \[\[$scores -gt 75]];then
+  echo "good"
+elif \[\[$scores -gt 60]];then
+  echo "pass!"
+else
+  echo "no pass!"
+fi;
+*** 编写MySQL备份脚本
+自动备份Mysql数据库脚本
+#!/bin/sh
+BAKDIP=/data/backup/mysql/`date +%Y-%m-%d`   #备份的文件,``代表引号内部当做命令来执行，返回一个结果
+MYSQLDB=webapp   #备份的数据库
+MYSQLPW=root   #数据库密码
+MYSQLUSR=root  #数据库的用户
+#must use root user run scripts 判断用户是否有root权限，如果不是则退出
+if [$UID -ne 0];then  #root的UID为0
+  echo This script must use the root user!!!
+  sleep 2
+  exit 0
+fi 
+#Define DiR and mkdir DIR判断目录是否存在，不存在则新建
+if [! -d $BAKDIR];then
+  mkdir -p $BAKDIR 
+else
+  echo This is $BAKDIR exists...
+  exit 0
+fi 
+#Use mysqldump backup mysql 使用mysqldump备份数据库
+/usr/bin/mysqldump -u $MYSQLUSR -p $MYSQLPW -d $MYSQLDB >$BAKDIR/webapp_db.sql
+if [$? -eq 0];then
+  echo "The mysql backup successfully"
+else 
+  echo "error"
+fi
+*** LAMP 安装脚本
+#!/bin/bash
+#Httpd define path variable,下载地址，文件名，文件夹的目录
+H_FILES=httpd-2.2.27.tar.bz2
+H_FILES_DIR=httpd-2.2.27 
+H_URL=http://mirrors.cnnic.cn/apache/httpd/
+H_PRERIX=/usr/local/apache2
+
+#MySQL define path variable
+M_FILES=mysql-5.5.20.tar.gz
+M_FILES_DIR=mysql-5.5.20   #文件目录
+M_URL=http://down1.chinaunix.net/distfiles/
+M_PREFIX=/usr/local/mysql/   #编译目录
+
+#PHP define path variable
+P_FILES=php-5.3.28.tar.bz2
+P_FILES_DIR=php-5.3.28
+P_URL=http://mirrors.sohu.com/PHP/
+P_PREFIX=/usr/local/php5/
+
+if [-z "$1"];then
+  echo -e "\033[36mplease Select Install Menu follow:\033[0m"
+  echo -e "\033[32m1)编译安装Apache服务器\033[1m"
+  echo "2)编译安装MySQL服务器"
+  echo "3)编译安装 PHP 服务器"
+  echo "4)配置index.php 并启动LAMP服务"
+  echo -e "\033[31musage{/bin/sh $0 1|2|3|4|help}\022[0m"
+  exit
+fi 
+if \[\["$1"-eq "help"]];then
+  echo "Please Select Install Menu follow"
+  echo "1)编译安装Apache服务器"
+  echo "2)编译安装MySQL服务器"
+  echo "3)编译安装 PHP 服务器"
+  echo "4)配置index.php 并启动LAMP服务"
+  echo "usage{/bin/sh $0 1|2|3|4|help}"
+  exit
+
+#Install httpd web server
+if \[\["$1"-eq"1"]];then    #一个中括号判断数字格式，两个中括号，判断字符格式
+  wget -c $H_URL/$H_FILES&& tar -jxvf $H_FILES && cd $H_FLED_DIR &&./configure --prefix=$H_PREFIX #源码安装一般分为三个步骤，配置(configure),编译(make),安装(make install) --prefix配置安装的路径,如果不配置默认安装在/usr/local/bin ,库文件默认/usr/local/lib,配置文件在/usr/local/etc,其他资源文件在/usr/local/share"
+  if[$? -eq 0];then
+    make && make install
+    echo "$H_FILES_DIR Server Install Success!"
+  else
+    echo "Make or Make install ERROR,Please check..."
+  fi
+fi
+
+#Install Mysql DB server
+if \[\["$1"-eq "2"]];then
+  wget -c $M_URL/$MFILES $$ tar -zxvf $M_FILES && cd &M_FILES_DIR && sudo apt install cmake -y && cmake . \
+--DCMAKE_INSTALL_PREFIX=$M_PREFIX \
+--DMYSQL_UNIX_ADDR=/tmp/mysql.sock\
+--DMYSQL_DATADIR=/data/mysql\
+--DSYSCONFDIR=/etc\
+--DMYSQL_USER=mysql\
+--DMYSQL_TCP_PORT=3306\
+--DWITH_XTRADB_STORAGE_ENGINE=1\
+--DWITH_INNOBASE_STORAGE_ENGINE=1\
+--DWITH_PARTITION_STORAGE_ENGINE=1\
+--DWITH_BLACKHOLE_STORAGE_ENGINE=1\
+--DWITH_MYISAM_STORAGE_ENGINE=1\
+--DWITH_READLINE=1\
+--DENABLE_LOCAL_INFILE=1\
+--DWITH_EXTRA_CHARSET=1\
+--DDEFAULT_CHARSET=UTF8\
+--DDEFAULT_COLLATION=utf8_gengeral_ci\
+--DEXTRA_CHARSETS=all\
+--DWITH_BIG_TABLES=1\
+--DWITH_DEBUG=0
+make && make install
+/bin/cp support-files/my-small.cnf /etc/my.conf
+/bin/cp support-files.mysql.server /etc/init.d/mysqld
+chmod +x /etc/init.d/mysqld
+chkconfig --add mysqld
+chkconfig mysqld on 
+  if[$? -eq 0];then
+    make && make install 
+    echo "$M_FILES_DIR Server Install Success!"
+  else
+    echo "$M_FiLES_DIR Make or Make install ERROR ,Please Check..."
+    exit 0
+  fi 
+fi 
+
+
+#Install httpd web server
+if \[\["$1"-eq"3"]];then    #一个中括号判断数字格式，两个中括号，判断字符格式
+  wget -c $P_URL/$H_FILES&& tar -jxvf $P_FILES && cd $P_FLED_DIR &&./configure --prefix=$P_PREFIX --with-config-file-path=$P_PREFIX/etc --with-mysql=$M_PREFIX --with-apxs2=H_PREFIX/bin/apxs  #源码安装一般分为三个步骤，配置(configure),编译(make),安装(make install) --prefix配置安装的路径,如果不配置默认安装在/usr/local/bin ,库文件默认/usr/local/lib,配置文件在/usr/local/etc,其他资源文件在/usr/local/share"
+  if[$? -eq 0];then
+    make ZEND_EXTRA_LIBS='-liconv'&& make install
+    echo "$H_FILES_DIR Server Install Success!"
+  else
+    echo "Make or Make install ERROR,Please check..."
+  fi
+fi
+
+if \[\["$1"-eq"4"]];then
+  sed -i '/DirctoryIndex/s/index.html/index.php index.html/g' $H_PREFIX/conf/http.conf 
+  $H_PREFIX/bin/apachectl restart
+  echo "AddType  application/x-httpd-php .php">>$H_PERFIX/conf/httpd.conf 
+  IP=`ifconfig eth1 |grep "Bcast"|awk '{print $2}'|cut -d: -f 2`
+  echo "You can access http://$IP/"
+cat >$H_PREFIX/htdocs/index.php <<EOF
+<?php 
+phpinfo();
+?>
+EOF
+fi
+
+查看端口启动的文件 netstat -tn1
+查看Apache是否启动：aptchectl -tables
+查看进程：ps -ef |grep http 
+
+** 循环语句
+*** for循环
+FOR 变量 in 字符串 
+  do
+  语句1
+  done
+
+例：
+#!/bin/sh 
+for i in `seq 15`  #seq 1 15  从1到15
+do 
+  echo "NUM is $i"
+done
+
+例2:
+#!/bin/bash
+j=0
+for((i=1;i<=100;i++))
+do 
+  j=`expr $i+$j`  #expr表示两个数字求和
+done
+echo $j
+
+例3：(找到相关log，然后批量打包)
+#!/bin/sh 
+for i in `find /var/log -name "*.log"`  #仅要后两个 "*.log|tail -2"  #规定文件夹深度-maxdepth 1
+do 
+tar -czf log.tgz $i # 若用tar.gz tar -zcvf log$i.tar.gz $i
+done
+
+例4，远程主机批量传输文件
+#!/bin/bash 
+for i in `seq 100 200` # `echo192.168.1.1 182.168.2.2`
+do 
+  scp -r /tmp/text.txt root@192.168.1.$i:/data/webapps/www
+done
+
+#例5，远程主机批量执行命令(用scp传输多个文件)
+#!/bin/bash 
+for i in `seq 100 200` # `echo192.168.1.1 182.168.2.2`
+FILES=$*  #可以接收多个参数，
+if [-z $*];then
+  echo "Usage:{$0 /boot|/tmp|/tmp/text.txt}"
+do 
+  scp -r $FILES root@192.168.1.$i:/data/webapps/www
+done
+
+免秘钥登录：ssh-keygen 
+#scp -r id_rsa.pub root@127.0.0.1:/root/.ssh/authorized_keys(这种方式不好)
+ssh-copy-id -i /root/.ssh/id_rsa.pub 127.0.0.1 
+*** while
+例1：
+#!/bin/sh 
+i=1;
+while (($i < 10));do 
+  echo $i;
+  ((i++));
+done;
+
+read -p "Please input number:" input #给变量input提供一个输入的时的提示信息
+echo $input #打印输入的内容
+
+read input
+echo $input 
+
+例2:(逐行打印文件的内容)
+#!/bin/sh 
+while read line 
+do 
+  echo $line;
+done </etc/hosts #该while是一个整体，读读文件中的每一行
+ 
+例3：(scp批量传输文件)
+#!/bin/bash
+while read line 
+do 
+  scp -r /tmp/test.txt root@$line:/tmp 
+done <list.txt  #list.txt是一个IP列表，read line 每次从列表文件读一行，作为line的值
+
+
+#!/bin/bash
+while read line
+do 
+  IP=`echo $line |awk '{print $2}'`  #读取list.txt中一行的第二列
+  scp -r /tmp/test.txt root@$IP:/tmp
+done <list.txt 
+*** until
+until 条件 
+do 
+  action 
+done 
+
+#!/bin/sh
+a=10;
+until \[\[$a -lt 0]];do 
+  echo $a;
+  ((a--;))
+done 
+*** case选择语句
+case $arg in 
+  pattern1)
+  语句1
+  ;;
+  pattern2)
+  语句2
+  ;;
+  *)
+  语句3
+  ;;
+esac
+
+例1：创建选择参数脚本
+#!/bin/sh 
+case $1 in 
+  Apache)
+  echo "wait install httpd server..." 
+  tar ...
+  cd ...
+  ;;
+
+  PHP)
+  echo "..."
+  tar ...
+  cd ...
+  ;;
+
+  mysql)
+  echo "..."
+  cd ...
+  ;;
+  
+  *       )
+  echo "Usage:{$0 Apache|PHP|mysql|help}"
+  ;;
+esac
+*** select选择语句
+Select一般用于选择菜单的创建，可以配合PS3来做菜单的打印输出信息
+例1：
+#!/bin/sh 
+PS3="What you like most of the open source system?"
+select i in CentOS RedHat Ubuntu 
+do 
+  echo "Your Select System:"$i 
+Done
+
+例2：
+#!/bin/sh 
+PS3="Select yout wile exec Menu"
+select i in "Apache" "mysql" "php"
+do
+case $i in 
+  Apache)
+  echo "wait install httpd server..." 
+  tar ...
+  cd ...
+  ;;
+
+  PHP)
+  echo "..."
+  tar ...
+  cd ...
+  ;;
+
+  mysql)
+  echo "..."
+  cd ...
+  ;;
+  
+  *       )
+  echo "Usage:{$0 Apache|PHP|mysql|help}"
+  ;;
+esac
+done
+* 函数
+简单语法：
+函数名(){
+  指令...
+  return n
+}
+
+规范语法：
+function 函数名(){
+  指令... 
+  return n 
+}
+
+执行：
+函数名  (注意不需要小括号)
+函数名 参数1 参数2
+
+执行函数的脚本：
+[-x /etc/init.d/oldboy_functions]&& ./etc/init.d/oldboy_functions||exit
+函数1
+函数2
+
+带参数的shell函数：
+#!/bin/sh 
+function Check_Url(){
+  curl -I -s $1|head -1 && return 0||return 1}
+
+Check_Url etiantian.org
+* 备份 
+全备份：tar -g /tmp/snapshot -czvf /tmp/filename.tar.gz /data/sh 
+增量备份： tar -g /tmp/snapshot -czvf /tmp/add_filename.tar.gz /data/sh 
+
+echo `data +%d`  显示几号
+echo `data +%u`  显示星期几
+
+#!/bin/sh 
+SOURCE_DIR=(
+  $*
+)
+TARGET_DIR=/data/backup/
+YEAR=`data +%Y`
+MONTH=`data +%m`
+DAY=`data +%d`
+WEEK=`data +%u`
+A_NAME=`data +%H%M`
+FILE=system_backup.tgz 
+CODE=$?
+if [-z "$*"];then
+  echo "please Enter Your Backup Files or Directors\n\nUsage:{$0 /boot/etc}"
+  exit
+fi 
+
+#如果目录不存在创建
+if [! -d $TARGET_DIR/$YEAR/$MONTH/$DAY];then 
+  make -p $TARGET_DIR/$YEAR/$MONTH/$DAY
+  echo "create success"
+
+Full_Backup()
+{
+if ["$WEEK" -eq "7"];then
+  rm -rf $TARGET_DIR/snapshot
+  cd $TARGET_DIR/$YEAR/$MONTH/$DAY; tar -g $TARGET_DIR/snapshot -zcvf $FILES ${SOURCE_DIR[@]}
+  ["$CODE"=="0"]&&echo "full_back success"
+fi
+}
+
+Add_Backup()
+{
+if ["$WEEK" -ne "7"];then
+  cd $TARGET_DIR/$YEAR/$MONTH/$DAY; tar -g $TARGET_DIR/snapshot -zcvf &A_NAME$FILES ${SOURCE_DIR[@]}
+  ["$CODE"=="0"]&&echo "add_back success"
+fi
+}
+sleep 3 
+Full_Backup;Add_Backup
+
+修改时间：
+data 
+data -s 20141123
+* 自动化运维
+查看ssh登录日志
+tail -n 100 /var/log/secure |grep "Failed password"|awk '{print $11}'，查看后100行 过滤含有Failed password字段的行，然后，awk选中第11行
+tail -n 100 /var/log/secure |grep "Failed password"|awk '{print $11}'|sort |uniq |sort -nr ,统计出现最多的ip并显示出现的次数，sort命令是将文件的每一行作为一个单位依次比较ASCII，最后升序输出 -u在输出行中去除重复行；-r输出改为降序，默认升序；-o结果输出到文件，sort -r number.txt -o number.txt;-n 以数值来排序
+tail -n 100 /var/log/secure |grep "Failed password"|awk '{print $11}'|sort |uniq |sort -nr |awk '{print $1}' 仅显示出现的次数
+
+加入防火墙
+vi /etc/sysconfig/iptables
+-A INPUT -s 192.168.33.14 -j DROP  ，#将该句加在允许所有防火墙访问之前
+/etc/init.d/iptables restart ，重启防火墙
+
+
+#!/bin/bash 
+SEC_FILE=/var/log/secure
+IP_ADDR=`tail -n 1000 /var/log/secure |grep "Failed password" egrep -o "([0-9]{1,3}\.){3}[0-9]{1,3}" | sort -nr |uniq -c |awk '$1>=4 {print $2}'`  ,输错密码大于4次就写入防火墙,如果第一列大于4，就打印第二列。
+IPTABLE_CONF=/etc/sysconfig/iptables 
+for i in `IP_ADDR`
+do 
+  #查看iptables配置文件是否含有提取的IP信息
+  cat $IPTABLE_CONF |grep $i >/dev/null  #该命令，另$?得零
+if [$? -ne 0];then
+  sed -i "/lo/a -A InPUT -s $i -m state --state NEW -m tcp -p tcp --dport 22 -j DROP" $IPTABLE_CONF ，在lo后一行添加
+else
+  echo "This $i is exist in ipables,please exit..."
+fi 
+done 
+#重启iptables生效
+/etc/init.d/iptables restart
+
+#批量拷贝文件至远程服务器
+#!/bin/sh 
+if [! -f ip.txt];then
+  echo "please create ip.txt Files,the ip.txt contents as:follows:"
+  cat <<EOF
+  192.168.149.128
+  192.168.19.129
+  EOF
+  exit
+fi 
+if [-z "$1"];then
+  echo "$0 command,example{Src_Files|Src_Dir Des_dir}"
+  exit
+fi 
+count=`cat ip.txt|wc -l`  #word count 统计字节数，字数 -l统计行数 -c统计字节数 -L打印最长行的长度 -w统计字数 -m统计字符数
+rm -rf ip.txt.swp
+i=0
+while((i<$count))
+do 
+i=`expr $i +1`
+sed "${i}s/^/&${i} /g" ip.txt >>ip.txt.swp  #sed "s/^/&1 /g" ip.txt 在第一行最前面添加1和一个空格
+ip=`awk -v I="$i" '{if(I==$1)print $2}' ip.txt.swp` #-v赋值
+scp -r $1 root@${ip}:$2
+#rsync -aP --delete $1 root@${IP}:$2
+done
+#免秘钥登录 
+ssh-keygen 
+ssh-copy-id -i /root/.ssh/id_rsa.pub 192.168.33.14  (将公钥拷贝到远程服务器)
+
+#批量远程服务器执行命令
+#!/bin/sh 
+if [!-f ip.txt];then 
+  echo "please create ip.txt Files,the ip.txt contents as:follows:"
+  cat <<EOF
+  192.168.149.128
+  192.168.19.129
+  EOF
+  exit
+fi 
+if [-z "$*"];then
+  echo "Usage:$0 Command,Example{rm /tmp/test.txt |mkdir /tmp/20140228}"
+  exit
+fi
+count=`cat ip.txt |wc -l`
+rm -rf ip.txt.swp
+i=0
+while((i<$count))
+do 
+  i=`expr $i+1`
+  sed "${i}s/^/&${i} /g" ip.txt >>ip.txt.swp
+  IP=`awk -v I="$i" '{if(I==$1)print $2}' ip.txt.swp`
+  ssh -q -l root $IP "$*;echo '------------------------\nThe $IP Exce Command : $* success !';sleep 2" ,表示执行了两条命令，一句是输入的命令，一句是echo命令,  ssh root@IP "df -h"
+done
+
+执行：sh script.sh 'ifconfig eth0'
+
+* 监控系统服务，发送邮件报警
+ps -ef |grep dhcp |grep -v grep |wc -l  (显示数字表示，都启动了dhcp多少个服务)
+Mail -s "邮件主题" -c "抄送地址" -b "密送地址" -f 发送人地址 -F 发件人姓名 <要发送的邮件内容
+#!/bash/bin
+EMAIL=email.txt 
+DATE=`date`
+cat <<EOF
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++++++++++welcome to use auto monotor System+++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+EOF 
+if [-z $1];then
+    echo "useage:{sh $0 nginx |mysql |list.txt}"
+    echo 
+    exit
+fi 
+sleep 2 
+M_IPADDR=`ifconfig eth1|grep "Bcast"|awk '{print $2}'|cut -d: -f 2`    ,提取第二列
+if [-f "$1" -a "$1"=="list.txt"];then 
+for i in `cat list.txt|grep -v "#"`
+do 
+    count=`ps -ef|grep $i|grep -v grep |grep -v "email"|head -1 |wc -l`
+    if [$count -ne 1];then
+        cat >$EMAIL<<EOF
+******************server Monitor************************
+通知类型：故障
+服务：$i
+主机：$M_IPADDR 
+状态：警告
+日期/时间：$DATE
+额外信息:
+CRITICAL - $i Server Connection Refused,please check.
+EOF 
+        dos2unix $EMAIL
+        echo "Monitor $i warning,please Check."
+        mail -s "$M_IPADDR $i warning" shxiangyan@gmail.com < $EMAIL >>/dev/null 2>&1
+    else
+        echo "The Monitor $i server 200 OK!"
+    fi
+    echo  "one"
+fi
+
+Mail -s "邮件主题" -c "抄送地址" -b "密送地址" -f 发送邮件地址 -F 发件人姓名 <要发送的邮件内容
+* 查看硬件信息
+cat /proc.meminfo |more
+cat /proc.meminfo |more
+
+CREATE TABLE `audit_audit_system`(
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `serv_info` varchar(50) NOT NULL,
+  `cpu_info` varchar(50) NOT NULL,
+  `disk_info` varchar(50) NOT NULL,
+  `mem_info` varchar(50) NOT NULL,
+  `load_info` varchar(50) NOTNULL,
+  `mark_info` varchar(50) NOTNULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ip_info`(`ip_info`),
+  UNIQUE KEY `ip_info_2`(`ip_info`)
+);
+
+!#/bin/sh 
+cat<<EOF 
++++++++++++++++++++++++++++++++++++++++++
++++++Welcome to use system Collect+++++++
++++++++++++++++++++++++++++++++++++++++++
+EOF 
+ip_info =`ifconfig |grep "Bcast" |tail -1 |awk '{print $2}' |cut -d: -f 2`
+cpu_info1=`cat /proc/cpuinfo |grep 'model name' |tail -1 |awk -F: '{print $2}' |sed 's/^//g' |awk '{print $1,$3,$4,$NF}'`
+cpu_info2=`cat /proc/cpuinfo |grep "physical id" |sort |uniq -c |wc -l`
+serv_info=`fdisk -l |grep "Disk" |grep -v "identifier" |awk '{print $2,$3,$4}' |sed 's/,//g'`
+mem_info=`free -m |grep "Mem" |awk '{print "Total",$1,$2"M"}'`
+load_info=`uptime |awk '{print "Current Load:"$(NF-2)}'|sed 's^,//g'`
+mark_info='BeiJing_IDC'
+echo IPADDR:${ip_info}
+echo HOSTNAME:$serv_info 
+echo CPU_INFO:${CPU_info1} X${cpu_info2}
+echo DISK_INFO:$disk_info 
+echo MEM_INFO:$mem_info 
+echo LOAD_INFO:$load_info 
+echo "You want to write the data to the databases?"
+if ["$ensure"=="yes" -o "$ensure" =="y" -o "$ensure"=="Y"];then 
+  echo 'mysql -u root -p 123456 -D database -e ''' "insert into audit_audit_system values('','${ip_info}','$serv_info','${cpu_info1} X${cpu_info2}','$disk_info','$mem_info','$load_info','$mark_info')" ''' '
+  echo "IP地址,主机名,CPU配置,硬盘容量,内存大小,负载情况" >>1.csv 
+  echo "${ip_info},${serv_info},${cpu_info1}X${cpu_info2},$disk_info,$mem_info,$load_info" >>1.csv
+else 
+   echo "wait exit..."
+   exit 
+fi
+* WEB界面展示
+html的结构包括头部(Head)、主体(Body)两大部分，头部描述浏览器所需信息，主体包含所要说明的具体内容
+<html>
+  <head>
+    <title>第一个HTML文档</title>
+  </head>
+  <body>
+    <h1>第一个HTML测试文档</h1>
+<table border="1" width="200">
+  <tr>
+    <td>1</td><td>安装Nginx</td>
+  </tr>
+  <tr>
+    <td>2</td><td>安装MySQL</td>
+  </tr>
+  <tr>
+    <td>3</td><td>安装PHP</td>
+  </tr>
+<table>
+    <hr color="green">  #加一条绿线
+    <a href="http://www.baidu.com">百度一下，你就知道</a>!
+  </body>
+</html>
+
+
