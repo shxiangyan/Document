@@ -916,8 +916,6 @@ html的结构包括头部(Head)、主体(Body)两大部分，头部描述浏览�
     <a href="http://www.baidu.com">百度一下，你就知道</a>!
   </body>
 </html>
-
-
 * 任务计划
 方式一:关机时启动:将执行脚本放在/lib/system/system-shutdown/目录下
 方式二: 假设脚本为backup.sh 
@@ -936,3 +934,9 @@ ExecStart=/bin/true
 ExecStop=/bin/bash /路径/backup.sh 
 [Install]
 WantedBy=multi-user.target
+3.重新加载systemd配置
+sudo systemctl daemon-reload
+4.链接service以使其开启启动
+sudo systemctl enable cleanup.service
+5. 手动启动
+sudo systemctl start cleanup.service(如果重启电脑不需要此步)
