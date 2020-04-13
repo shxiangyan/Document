@@ -1,13 +1,12 @@
 {
   "config": {
-    "branch": "master",
-    "domain": "https://shxiangyan.github.io/",
-    "email": "shxiangyan@gmail.com",
     "platform": "github",
-    "privateKey": "",
-    "repository": "shxiangyan.github.io",
-    "token": "bdfdd55957dd2d3d3761a7e12978649fb4d1b329",
-    "username": "shxiangyan"
+    "domain": "",
+    "repository": "",
+    "branch": "",
+    "username": "",
+    "email": "",
+    "token": ""
   },
   "comment": {
     "commentPlatform": "gitalk",
@@ -17,11 +16,11 @@
       "shortname": ""
     },
     "gitalkSetting": {
-      "clientId": "33872e8e79bd754a763b",
-      "clientSecret": "ce602ba057f352ca3441ab26d7167c83afe263e0",
-      "owner": "shxiangyan",
-      "repository": "shxiangyan.github.io"
+      "clientId": "",
+      "clientSecret": "",
+      "owner": "",
+      "repository": ""
     },
-    "showComment": true
+    "showComment": false
   }
 }

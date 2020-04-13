@@ -738,26 +738,120 @@ apt install -y apt-transport-https
 2.安装 
 curl -sSL https://get.docker.com |sudo sh
 
-* owncloud
-sudo groupadd docker
-sudo gpasswd -a ${USER} docker
-sudo service docker restart
-newgrp - docker
-
-sudo docker pull owncloud(拉取镜像)
+** 传文件
+docker cp 容器名或容器号:/opt/tensorflow /opt/test (从docker向宿主机传文件)
+** 删除操作
 docker ps(查看当前正在运行的容器)
 docker ps -a(查看所有的容器)
 docker rm <container id>(删除容器)
 docker images(查看镜像)
 docker rmi <image id>(删除镜像)
-docker start <container name>(重新进入某容器)
-docker attach <container name>(进入交互式运行的终端,退出交互式运行的容器c-p c-q)
+** 容器设为不用sudo就能登录
+sudo groupadd docker
+sudo gpasswd -a ${USER} docker
+sudo service docker restart
+newgrp - docker
+* owncloud
+sudo docker pull owncloud(拉取镜像)
 sudo docker run -d -p 80:80 owncloud(运行容器)
 docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=密码 -d mysql:5.7
 docker run --name owncloud --link some-mysql:mysql -d application-that-uses-mysql
+* Densepose
+mkdir -p dockerfile/df_test1(递归创建文件夹)
+cd dockerfile/df_test1
+vim Dockerfile
+
+e.g.
+#First Dockerfile
+FROM ubuntu:18.04
+MAINTAINER shxiangyan "shxiangyan@gmail"
+RUN apt update
+RUN apt install -y nginx
+EXPOSE 80 
+
+docker build[OPTIONS]PATH|URL-
+-t,--tag=""镜像的名字
+docker bulid -t="shxiangyan/df_test1" .
+用镜像启动容器：docker run -it --name==Densepose image_ID /bin/bash
+退出:C-p C-q 
+进入正在运行的容器：docker attach 容器名
+docker rm 容器名或容器号
+docker rmi 镜像名或镜像号
+* 安装portia
+docker search portia
+docker pull scrapinghub/portia
+docker run -i -t --rm -v <PROJECTS_FOLDER>:/app/data/projects:rw -p 9001:9001 scrapinghub/portia
+docker rename 原容器名  新容器名
+docker commit [选项] <容器ID或容器名> [<仓库名>[:<标签>]]提交成镜像
+docker commit -m "注释" 容器ID 镜像名:版本
+docker push NAME[:TAG]->docker push shxiangyan/nginx
+* 安装mysql
+docker search mysql
+docker pull mysql:3.6
+docker run -p 12345:3306 --name mysql -v /宿主机文件:/docker文件
+-e MYSQL_ROOT_PASSWORD=123456 (初始化root的初始密码)
+-d mysql:3.6
+
+进入已存在docker ps -a 中的文件
+docker start 容器名或容器号
+docker stop 容器名或容器号
+docker attach 容器名或容器号
+C-p C-q退出交互式运行的容器,保持后台运行
+* 安装nvidia-docker
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
+curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+
+sudo apt-get update && sudo apt-get install -y nvidia-container-toolkit
+sudo apt install nvidia-docker2
+
+sudo systemctl restart docker
+
+#### Test nvidia-smi with the latest official CUDA image
+docker run --gpus all nvidia/cuda:10.0-base nvidia-smi
+
+# Start a GPU enabled container on two GPUs
+docker run --gpus 2 nvidia/cuda:10.0-base nvidia-smi
+
+# Starting a GPU enabled container on specific GPUs
+docker run --gpus '"device=1,2"' nvidia/cuda:10.0-base nvidia-smi
+docker run --gpus '"device=UUID-ABCDEF,1"' nvidia/cuda:10.0-base nvidia-smi
+
+# Specifying a capability (graphics, compute, ...) for my container
+# Note this is rarely if ever used this way
+docker run --gpus all,capabilities=utility nvidia/cuda:10.0-base nvidia-smi
+
+* cycleGan
+docker pull taesungp/pytorch-cyclegan-and-pix2pix
+nvidia-docker run -it -p 8097:8097  taesungp/pytorch-cyclegan-and-pix2pix
+
+cd /workspace/pytorch-CycleGAN-and-pix2pix
+bash datasets/download_pix2pix_dataset.sh facades
+python -m visdom.server &
+bash scripts/train_pix2pix.sh
+# download pre-model
+bash ./scripts/download_cyclegan_model.sh horse2zebra
+
+bash ./scripts/download_pix2pix_model.sh facades_label2photo
+# download dataset
+bash ./datasets/download_cyclegan_dataset.sh horse2zebra
+
+bash ./datasets/download_pix2pix_dataset.sh facades
+# test
+python test.py --dataroot datasets/horse2zebra/testA --name horse2zebra_pretrained --model test --no_dropout
+
+python test.py --dataroot ./datasets/facades/ --direction BtoA --model pix2pix --name facades_label2photo_pretrained
+
+The option --model test is used for generating results of CycleGAN only for one side. This option will automatically set --dataset_mode single, which only loads the images from one set. On the contrary, using --model cycle_gan requires loading and generating results in both directions, which is sometimes unnecessary. The results will be saved at ./results/. Use --results_dir {directory_path_to_save_result} to specify the results directory.
+
+For your own experiments, you might want to specify --netG, --norm, --no_dropout to match the generator architecture of the trained model.
 
 
 
 
+Note that we specified --direction BtoA as Facades dataset's A to B direction is photos to labels.
 
+If you would like to apply a pre-trained model to a collection of input images (rather than image pairs), please use --model test option. See ./scripts/test_single.sh for how to apply a model to Facade label maps (stored in the directory facades/testB).
+
+See a list of currently available models at ./scripts/download_pix2pix_model.sh
 

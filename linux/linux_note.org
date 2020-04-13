@@ -183,13 +183,43 @@ sudo service smbd restart
 打印磁盘信息
 sudo fdisk -l
 
-
 先使用命令查看/dev/sda2的UUID
 sudo blkid /dev/sda2
 
 在 /etc/fstab 中
-UUID=30722A4C722A16DE /home/yan/data/ ntfs defaults 0 2
+UUID=30722A4C722A16DE /home/yan/data/ ntfs ext4 rw 0 0
 
 sudo mount -a
+
+卸载:
+sudo umount -l /home/yan/data 强行解除卸载    
+
+fuser -m /home/yan/data 
+kill -9 PID
+
+分区:
+gparted
+
 * 开机启动
 Ubuntu 服务器在启动时会自动执行 /etc/init.d 目录下的脚本，所以我们可以将需要执行的脚本放到 /etc/init.d 目录下
+* 查看上次登录信息
+cat ~/.bash_history 查看历史命令
+uptime  查看上次登录时间
+last -f /var/log/wtmp 查看可疑的ip登录z
+cat /var/log/secure |grep 
+修改ssh端口 /etc/ssh/sshd_config  /etc/ssh/ssh_config
+
+禁止ssh用root登录 /etc/ssh/sshd_config
+service sshd restart
+service ssh restart
+* 防火墙
+安装 ufw 
+启用 ufw enable 
+sudo ufw default deny 关闭所有外部对本机的访问但本机访问外部正常
+开启或关闭某个端口,sudo ufw allow|deny [service]
+sudo ufw allow smtp   允许所有外部IP访问本机的25/tcp (smtp)端口
+sudo ufw allow 22/tcp 允许外部IP访问本机的22/tcp(ssh)端口 
+sudo ufw allow 53 允许外部访问53端口(tcp/UDP)
+sudo ufw allow from 192.168.1.100 允许此IP访问所有的本机端口
+sudo ufw allow proto udp 192.168.0.1 port 53 to 192.168.0.2 port 53   允许某条协议
+sudo ufw delete allow smtp 删除上面建立的某条规则
