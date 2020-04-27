@@ -12,12 +12,15 @@ sudo usermod -s /bin/bash ch123
 sudo passwd ch123
 userdel -r ch123
 /etc/sudoers（"xxx ALL=(ALL) ALL"(这里的xxx是要改的用户名)）
+
+sudo adduser 用户名
 * 创建快捷方式
 sudo ln -s /media/yan/Data/learn/ /home/yan/Desktop/learn
 * 查看磁盘使用情况
 df -h
 du -sh *
 * 关闭进程
+ps aux | less 查看正在运行的进程
 ps -ef | grep progress_name
 kill -l pid
 killall progress_name
@@ -135,8 +138,27 @@ unset SESSION_MANAGER
 unset DBUS_SESSION_BUS_ADDRESS
 
 echo "xfce4-session" > ~/.xsession
+
+桌面xrdp
+sudo apt install xfce4 
+sudo apt-get install xrdp 
+sudo apt-get install kali-desktop-xfce xorg xrdp 
+sudo /etc/init.d/xrdp start
+sudo emacs /etc/xrdp/xrdp.ini 修改端口
+
 ** 时间
-sudo ntpd -s -d
+# apt-get install ntp
+# sudo ntpd -s -d
+
+1.安装ntp sudo apt-get install ntpdate
+
+ntpdate time.nist.gov
+
+2.修改时区 输入tzselect，选择时区
+
+3.输入sudo service ntp start
+
+
 * ssh欢迎界面
 修改：/etc/motd,ascii画
 
@@ -223,3 +245,64 @@ sudo ufw allow 53 允许外部访问53端口(tcp/UDP)
 sudo ufw allow from 192.168.1.100 允许此IP访问所有的本机端口
 sudo ufw allow proto udp 192.168.0.1 port 53 to 192.168.0.2 port 53   允许某条协议
 sudo ufw delete allow smtp 删除上面建立的某条规则
+* 运行脚本
+perl 脚本名
+* V2ray(官网https://www.v2ray.com/chapter_00/install.html)
+修改时间:cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+服务端:
+bash <(curl -L -s https://install.direct/go.sh)
+修改配置:/etc/v2ray/config.json(https://intmainreturn0.com/v2ray-config-gen/#)
+重启:systemctl restart v2ray
+查看:service v2ray status
+下载客户端:(https://github.com/v2ray/v2ray-core/releases)
+下载V2rayN(https://github.com/2dust/v2rayN/releases)
+
+* resqberry
+** 连接wifi 
+储存wifi密码:/etc/wpa_supplicant/wpa_supplicant.conf
+设置静态ip:sudo nano /etc/dhcpcd.conf
+网络配置文件:sudo vim /etc/network/interfaces
+
+若是修改静态ip代码:
+interfaces wlan0
+static ip_address=192.168.1.65/24
+static routers=192.168.1.2 
+static domain_name_servers=233.6.6.6
+static domain_search=8.8.8.8
+noipv6
+
+
+
+重启wifi:sudo wpa_cli -i wlan0 reconfigure
+
+查看无线网卡支持的频率:sudo iwlist wlan0 freq
+
+
+搭建热点:网卡wlan0连接wifi,wlan1发射热点.
+1.设置wlan0静态ip
+SSID Tenda_02B0E0
+static ip_address=192.168.1.5
+static routers=192.168.1.2
+static domain_name_servers=192.168.1.2
+static domain_search=8.8.8.8
+noipv6
+2.安装create_AP
+git clone https://github.com/oblique/create_ap
+cd create_ap
+make install
+apt-get install util-linux procps hostapd iproute2 iw haveged dnsmasq
+create_ap wlan1 wlan0 WIFI8848
+vim /usr/lib/systemd/system/create_ap.service
+ExecStart=/usr/bin/create_ap wlan1 wlan0 WIFI8848
+systemctl daemon-reload
+systemctl enable create_ap.service
+3.命令连接wifi
+iw dev wlan0 connect SSID
+iw dev wlan0 connect SSID key 0:PASSWORD
+service network-manager stop
+wpa_passphrase SSID PASSWORD > wpa.conf
+wpa_supplicant -i wlan0 -B -c wpa.cong
+dhclient wlan0
+
+3.apt install motion
+emacs /etc/motion/motion.conf

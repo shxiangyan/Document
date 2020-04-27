@@ -1,0 +1,47 @@
+* faceswap
+1. 提取脸
+extract
+创建输出图片文件夹
+Input Dir 输入视频
+Output Dir 输出图片存放文件夹
+2. cleaning face 
+Tools ->sort 
+Input Dir 输入以上输出文件夹的图片
+Output Dir sorted文件夹
+删除sorted文件夹不中用的图片
+3. 创建模型
+创建模型文件夹model
+train
+Input A 以上得到的sorted文件夹
+Alignments A 放入json文件
+Input B 同上
+Alignments B 同上
+Model Dir 放入模型储存的文件夹
+选中DF1-H128
+Batch size
+Iterations
+Gpu数量
+4. final video
+创建一个out文件夹
+convert
+Input Dir 选中源视频
+output Dir 选中创建的输出文件夹
+Alignments 选中源文件的json文件
+Model Dir 选中模型文件夹
+
+
+5. 合成视频
+tools->effmpeg
+Input 以上input文件夹
+output 输出视频
+参考视频选中源
+
+6. second video using swapped model
+清空output文件夹
+convert
+input Dir 选中dierge视频
+output Dir 选中output文件夹
+Alignments 选中该视屏的json文件
+Model Dir 选中model文件
+setting ->swap model
+

@@ -108,3 +108,31 @@ sudo make install
     --model_folder ~/local/src/openpose/models
     --image_dir ./image \
     --write_images ./output_image \
+* shortcut
+sudo apt install libsdl2-dev
+sudo add-apt-repository ppa:haraldhv/shotcut
+sudo apt-get update && sudo apt-get upgrade
+sudo apt install shotcut
+* motion
+
+sudo apt-get update
+
+sudo apt-get install motion
+sudo nano /etc/default/motion
+把文件中 "start_motion_daemon=no" 改为yes,运行后台运行(非必要)
+
+sudo nano /etc/motion/motion.conf
+
+daemon on  #off改成on (非必要)
+width 640  
+height 480 #根据摄像头像素自行更改
+framerate 50 #这个代表帧率，30左右效果还行，可根据效果自行更改
+stream_localhost off    #设为off(局域网可访问)
+stream_maxrate 70
+
+	
+* face_recognition
+创建一个虚拟环境
+conda create -n face_recongnition python=3.8
+pip install face_recongnition matplotlib jupyter
+jupyter notebook xxx
